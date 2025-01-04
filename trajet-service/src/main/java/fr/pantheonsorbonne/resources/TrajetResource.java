@@ -1,13 +1,17 @@
 package fr.pantheonsorbonne.resources;
 
+import fr.pantheonsorbonne.dao.SousTrajetDAO;
 import fr.pantheonsorbonne.dto.CreateTrajetRequest;
+import fr.pantheonsorbonne.entity.SousTrajet;
 import fr.pantheonsorbonne.entity.TrajetPrincipal;
 import fr.pantheonsorbonne.service.TrajetService;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.Date;
+import java.util.List;
 
 @Path("/trajets")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -17,8 +21,11 @@ public class TrajetResource {
     @Inject
     private TrajetService trajetService;
 
-    // Endpoint pour créer un trajet principal
+    @Inject
+    private SousTrajetDAO sousTrajetDAO;
+
     @POST
+    @Transactional
     public Response createTrajet(CreateTrajetRequest request) {
         try {
             TrajetPrincipal trajetPrincipal = trajetService.createTrajet(
@@ -28,15 +35,12 @@ public class TrajetResource {
                     request.getPrix(),
                     request.getConducteurId()
             );
-            return Response.status(Response.Status.CREATED).entity(trajetPrincipal).build();
+            return Response.ok(trajetPrincipal).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erreur lors de la création du trajet : " + e.getMessage())
-                    .build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
     }
 
-    // Endpoint pour récupérer un trajet principal par ID
     @GET
     @Path("/{id}")
     public Response getTrajetById(@PathParam("id") Long id) {
@@ -46,4 +50,11 @@ public class TrajetResource {
         }
         return Response.ok(trajetPrincipal).build();
     }
+
+    @GET
+    @Path("/{trajetPrincipalId}")
+    public List<SousTrajet> getSousTrajetsByTrajetPrincipal(@PathParam("trajetPrincipalId") Long trajetPrincipalId) {
+        return sousTrajetDAO.findByTrajetPrincipalId(trajetPrincipalId);
+    }
+
 }

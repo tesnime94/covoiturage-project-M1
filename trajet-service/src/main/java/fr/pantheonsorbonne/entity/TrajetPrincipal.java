@@ -1,4 +1,5 @@
 package fr.pantheonsorbonne.entity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +29,7 @@ public class TrajetPrincipal {
     private Long conducteurId; // ID de l'utilisateur conducteur
 
     @OneToMany(mappedBy = "trajetPrincipal", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<SousTrajet> sousTrajets = new ArrayList<>();
 
     // Getters et Setters

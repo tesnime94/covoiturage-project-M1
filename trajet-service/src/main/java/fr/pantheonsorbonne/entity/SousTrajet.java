@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -24,6 +25,7 @@ public class SousTrajet {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trajet_principal_id", nullable = false)
+    @JsonBackReference
     private TrajetPrincipal trajetPrincipal;
 
     public Long getId() {

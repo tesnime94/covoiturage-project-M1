@@ -10,7 +10,7 @@ public class UserDAO {
     @Inject
     EntityManager em;
     public boolean isUserPresent(String userEmail){
-        return em.createQuery("SELECT u from User u WHERE u.email = :email")
+        return !em.createQuery("SELECT u from User u WHERE u.email = :email")
                 .setParameter("email", userEmail)
                 .getResultList().isEmpty();
     }

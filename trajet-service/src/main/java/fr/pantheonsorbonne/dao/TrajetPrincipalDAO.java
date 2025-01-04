@@ -20,8 +20,13 @@ public class TrajetPrincipalDAO {
 
     // Méthode pour récupérer un trajet principal par ID
     public TrajetPrincipal findById(Long id) {
-        return em.find(TrajetPrincipal.class, id);
+        return em.createQuery(
+                        "SELECT t FROM TrajetPrincipal t WHERE t.id = :id", TrajetPrincipal.class
+                )
+                .setParameter("id", id)
+                .getSingleResult();
     }
+
 
     // Méthode pour récupérer tous les trajets principaux
     public List<TrajetPrincipal> findAll() {
