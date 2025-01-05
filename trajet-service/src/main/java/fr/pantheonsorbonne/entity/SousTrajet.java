@@ -1,6 +1,6 @@
 package fr.pantheonsorbonne.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -24,8 +24,8 @@ public class SousTrajet {
     private Date horaire;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore // pour eviter vite d'inclure les sous trajets automatiquement
     @JoinColumn(name = "trajet_principal_id", nullable = false)
-    @JsonBackReference
     private TrajetPrincipal trajetPrincipal;
 
     public Long getId() {

@@ -1,16 +1,16 @@
 package fr.pantheonsorbonne.resources;
 
-import fr.pantheonsorbonne.dao.SousTrajetDAO;
 import fr.pantheonsorbonne.dto.CreateTrajetRequest;
-import fr.pantheonsorbonne.entity.SousTrajet;
+import fr.pantheonsorbonne.dto.TrajetPrincipalDTO;
 import fr.pantheonsorbonne.entity.TrajetPrincipal;
+import fr.pantheonsorbonne.exception.TrajetNotFoundException;
 import fr.pantheonsorbonne.service.TrajetService;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import java.util.Date;
+
 import java.util.List;
 
 @Path("/trajets")
@@ -20,9 +20,6 @@ public class TrajetResource {
 
     @Inject
     private TrajetService trajetService;
-
-    @Inject
-    private SousTrajetDAO sousTrajetDAO;
 
     @POST
     @Transactional
@@ -44,17 +41,36 @@ public class TrajetResource {
     @GET
     @Path("/{id}")
     public Response getTrajetById(@PathParam("id") Long id) {
-        TrajetPrincipal trajetPrincipal = trajetService.getTrajetById(id);
-        if (trajetPrincipal == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Trajet non trouvé").build();
+        try {
+            TrajetPrincipal trajet = trajetService.getTrajetById(id);
+            TrajetPrincipalDTO dto = new TrajetPrincipalDTO(
+                    trajet.getId(),
+                    trajet.getVilleDepart(),
+                    trajet.getVilleArrivee(),
+                    trajet.getHoraire(),
+                    trajet.getPrix(),
+                    trajet.getConducteurId()
+            );
+            return Response.ok(dto).build();
+        } catch (TrajetNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }
-        return Response.ok(trajetPrincipal).build();
     }
 
     @GET
-    @Path("/{trajetPrincipalId}")
-    public List<SousTrajet> getSousTrajetsByTrajetPrincipal(@PathParam("trajetPrincipalId") Long trajetPrincipalId) {
-        return sousTrajetDAO.findByTrajetPrincipalId(trajetPrincipalId);
+    public Response getAllTrajets() {
+        List<TrajetPrincipal> trajets = trajetService.getAllTrajets();
+        return Response.ok(trajets).build();
     }
 
+    @DELETE
+    @Path("/{id}")
+    @Transactional
+    public Response deleteTrajetById(@PathParam("id") Long id) {
+        boolean deleted = trajetService.deleteTrajetById(id);
+        if (deleted) {
+            return Response.ok("Trajet supprimé avec succès.").build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).entity("Trajet non trouvé.").build();
+    }
 }

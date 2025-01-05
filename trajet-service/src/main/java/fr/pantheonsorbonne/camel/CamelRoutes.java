@@ -20,8 +20,7 @@ public class CamelRoutes extends RouteBuilder {
                 .onException(Exception.class)
                 .log("Erreur lors de l'appel à Overpass : ${exception.message}")
                 .handled(true);
-
-
+        
         from("direct:nominatimReverse")
                 .routeId("nominatim-reverse-route")
                 .setHeader("CamelHttpMethod", constant("GET"))

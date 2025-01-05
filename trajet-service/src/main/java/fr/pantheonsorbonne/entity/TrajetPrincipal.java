@@ -1,6 +1,8 @@
 package fr.pantheonsorbonne.entity;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,8 +30,8 @@ public class TrajetPrincipal {
     @Column(name = "conducteur_id", nullable = false)
     private Long conducteurId; // ID de l'utilisateur conducteur
 
-    @OneToMany(mappedBy = "trajetPrincipal", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "trajetPrincipal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore // pour eviter vite d'inclure les sous trajets automatiquement
     private List<SousTrajet> sousTrajets = new ArrayList<>();
 
     // Getters et Setters

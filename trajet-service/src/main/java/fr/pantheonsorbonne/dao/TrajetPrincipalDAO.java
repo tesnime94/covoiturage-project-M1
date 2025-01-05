@@ -2,7 +2,6 @@ package fr.pantheonsorbonne.dao;
 
 import fr.pantheonsorbonne.entity.TrajetPrincipal;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -34,10 +33,13 @@ public class TrajetPrincipalDAO {
     }
 
     // Méthode pour supprimer un trajet principal par ID
-    public void deleteById(Long id) {
-        TrajetPrincipal trajetPrincipal = findById(id);
-        if (trajetPrincipal != null) {
-            em.remove(trajetPrincipal);
+    public boolean deleteById(Long id) {
+        TrajetPrincipal trajet = em.find(TrajetPrincipal.class, id);
+        if (trajet != null) {
+            em.remove(trajet);
+            return true;
         }
+        return false;
     }
+
 }
