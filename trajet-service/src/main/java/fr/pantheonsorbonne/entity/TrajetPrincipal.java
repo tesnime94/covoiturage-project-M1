@@ -3,8 +3,9 @@ package fr.pantheonsorbonne.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -20,12 +21,33 @@ public class TrajetPrincipal {
     @Column(nullable = false)
     private String villeArrivee;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private Date horaire;
+    private LocalDate date;
+
+    @Column(nullable = false)
+    private LocalTime horaire;
 
     @Column(nullable = false)
     private Double prix;
+
+    public LocalTime getHoraire() {
+        return horaire;
+    }
+
+    public void setHoraire(LocalTime horaire) {
+        this.horaire = horaire;
+    }
+
+    public Integer getNbPlaces() {
+        return nbPlaces;
+    }
+
+    public void setNbPlaces(Integer nbPlaces) {
+        this.nbPlaces = nbPlaces;
+    }
+
+    @Column(nullable = false)
+    private Integer nbPlaces;
 
     @Column(name = "conducteur_id", nullable = false)
     private Long conducteurId; // ID de l'utilisateur conducteur
@@ -59,14 +81,6 @@ public class TrajetPrincipal {
         this.villeArrivee = villeArrivee;
     }
 
-    public Date getHoraire() {
-        return horaire;
-    }
-
-    public void setHoraire(Date horaire) {
-        this.horaire = horaire;
-    }
-
     public Double getPrix() {
         return prix;
     }
@@ -89,5 +103,13 @@ public class TrajetPrincipal {
 
     public void setSousTrajets(List<SousTrajet> sousTrajets) {
         this.sousTrajets = sousTrajets;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }

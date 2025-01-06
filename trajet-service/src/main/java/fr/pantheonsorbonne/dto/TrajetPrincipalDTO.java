@@ -1,7 +1,9 @@
 package fr.pantheonsorbonne.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
-public record TrajetPrincipalDTO(Long id, String villeDepart, String villeArrivee, Date horaire, Double prix,
-                                 Long conducteurId) {
+public record TrajetPrincipalDTO(Long id, String villeDepart, String villeArrivee, LocalDate date, LocalTime horaire,
+                                 Integer nombreDePlaces, Double prix, Long conducteurId) {
 }
+

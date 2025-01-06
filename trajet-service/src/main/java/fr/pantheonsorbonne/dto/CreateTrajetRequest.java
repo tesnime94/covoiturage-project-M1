@@ -1,11 +1,14 @@
 package fr.pantheonsorbonne.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class CreateTrajetRequest {
     private String villeDepart;
     private String villeArrivee;
-    private Date horaire;
+    private LocalDate date;
+    private LocalTime horaire;
+    private Integer nombreDePlaces;
     private Double prix;
     private Long conducteurId;
 
@@ -26,11 +29,19 @@ public class CreateTrajetRequest {
         this.villeArrivee = villeArrivee;
     }
 
-    public Date getHoraire() {
+    public Integer getNombreDePlaces() {
+        return nombreDePlaces;
+    }
+
+    public void setNombreDePlaces(Integer nombreDePlaces) {
+        this.nombreDePlaces = nombreDePlaces;
+    }
+
+    public LocalTime getHoraire() {
         return horaire;
     }
 
-    public void setHoraire(Date horaire) {
+    public void setHoraire(LocalTime horaire) {
         this.horaire = horaire;
     }
 
@@ -48,5 +59,13 @@ public class CreateTrajetRequest {
 
     public void setConducteurId(Long conducteurId) {
         this.conducteurId = conducteurId;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }

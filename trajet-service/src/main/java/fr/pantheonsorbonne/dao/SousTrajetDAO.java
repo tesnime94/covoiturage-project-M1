@@ -25,6 +25,4 @@ public class SousTrajetDAO {
                 .setParameter("trajetPrincipalId", trajetPrincipalId)
                 .getResultList();
     }
-
-
 }

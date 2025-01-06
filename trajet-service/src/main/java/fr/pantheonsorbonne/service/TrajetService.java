@@ -14,8 +14,9 @@ import org.apache.camel.ProducerTemplate;
 import java.io.StringReader;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,15 +30,15 @@ public class TrajetService {
     @Inject
     private TrajetPrincipalDAO trajetPrincipalDAO;
 
+    LocalDate today = LocalDate.now();
+    LocalTime now = LocalTime.now();
+
 
     @Transactional
-    public TrajetPrincipal createTrajet(String villeDepart, String villeArrivee, Date horaire, Double prix, Long conducteurId) {
+    public TrajetPrincipal createTrajet(String villeDepart, String villeArrivee, LocalDate date, LocalTime horaire, Integer nombreDePlaces, Double prix, Long conducteurId) {
         // Validation des données d'entrée
         if (villeDepart == null || villeDepart.isEmpty() || villeArrivee == null || villeArrivee.isEmpty()) {
             throw new InvalidTrajetDataException("Les villes de départ et d'arrivée sont obligatoires.");
-        }
-        if (horaire == null || horaire.before(new Date())) {
-            throw new InvalidTrajetDataException("L'horaire doit être une date future.");
         }
         if (prix == null || prix <= 0) {
             throw new InvalidTrajetDataException("Le prix doit être supérieur à 0.");
@@ -45,12 +46,23 @@ public class TrajetService {
         if (conducteurId == null || conducteurId <= 0) {
             throw new InvalidTrajetDataException("Un conducteur valide est obligatoire.");
         }
+        if (nombreDePlaces == null || nombreDePlaces <= 0) {
+            throw new InvalidTrajetDataException("Le nombre de places doit être supérieur à 0.");
+        }
+        if (date == null || (date.isBefore(today))) {
+            throw new InvalidTrajetDataException("La date doit être une date future.");
+        }
+        if (date.equals(today) && (horaire == null || horaire.isBefore(now))) {
+            throw new InvalidTrajetDataException("Si la date est aujourd'hui, l'horaire doit être dans le futur.");
+        }
 
         // Création de l'objet TrajetPrincipal
         TrajetPrincipal trajetPrincipal = new TrajetPrincipal();
         trajetPrincipal.setVilleDepart(villeDepart);
         trajetPrincipal.setVilleArrivee(villeArrivee);
+        trajetPrincipal.setDate(date);
         trajetPrincipal.setHoraire(horaire);
+        trajetPrincipal.setNbPlaces(nombreDePlaces);
         trajetPrincipal.setPrix(prix);
         trajetPrincipal.setConducteurId(conducteurId);
 
@@ -60,6 +72,7 @@ public class TrajetService {
             SousTrajet sousTrajet = new SousTrajet();
             sousTrajet.setVilleDepart(villeDepart); // Point de départ pour ce sous-trajet
             sousTrajet.setVilleArrivee(ville);      // Ville intermédiaire
+            sousTrajet.setDate(date);
             sousTrajet.setHoraire(horaire);         // Même horaire que le trajet principal
             sousTrajet.setTrajetPrincipal(trajetPrincipal); // Lier au trajet principal
             trajetPrincipal.getSousTrajets().add(sousTrajet); // Ajouter le sous-trajet au trajet principal

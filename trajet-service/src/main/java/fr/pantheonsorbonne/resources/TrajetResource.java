@@ -28,7 +28,9 @@ public class TrajetResource {
             TrajetPrincipal trajetPrincipal = trajetService.createTrajet(
                     request.getVilleDepart(),
                     request.getVilleArrivee(),
+                    request.getDate(),
                     request.getHoraire(),
+                    request.getNombreDePlaces(),
                     request.getPrix(),
                     request.getConducteurId()
             );
@@ -47,7 +49,9 @@ public class TrajetResource {
                     trajet.getId(),
                     trajet.getVilleDepart(),
                     trajet.getVilleArrivee(),
+                    trajet.getDate(),
                     trajet.getHoraire(),
+                    trajet.getNbPlaces(),
                     trajet.getPrix(),
                     trajet.getConducteurId()
             );
