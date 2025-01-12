@@ -32,11 +32,13 @@ public class TrajetResource {
                     request.getHoraire(),
                     request.getNombreDePlaces(),
                     request.getPrix(),
-                    request.getConducteurId()
+                    request.getConducteurMail()
             );
             return Response.ok(trajetPrincipal).build();
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erreur lors de la création du trajet : " + e.getMessage()).build();
         }
     }
 
@@ -53,7 +55,7 @@ public class TrajetResource {
                     trajet.getHoraire(),
                     trajet.getNbPlaces(),
                     trajet.getPrix(),
-                    trajet.getConducteurId()
+                    trajet.getConducteurMail()
             );
             return Response.ok(dto).build();
         } catch (TrajetNotFoundException e) {

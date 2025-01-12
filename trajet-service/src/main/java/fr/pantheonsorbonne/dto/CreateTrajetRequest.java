@@ -10,7 +10,7 @@ public class CreateTrajetRequest {
     private LocalTime horaire;
     private Integer nombreDePlaces;
     private Double prix;
-    private Long conducteurId;
+    private String conducteurMail;
 
     // Getters et Setters
     public String getVilleDepart() {
@@ -53,12 +53,12 @@ public class CreateTrajetRequest {
         this.prix = prix;
     }
 
-    public Long getConducteurId() {
-        return conducteurId;
+    public String getConducteurMail() {
+        return conducteurMail;
     }
 
-    public void setConducteurId(Long conducteurId) {
-        this.conducteurId = conducteurId;
+    public void setConducteurMail(String conducteurMail) {
+        this.conducteurMail = conducteurMail;
     }
 
     public LocalDate getDate() {

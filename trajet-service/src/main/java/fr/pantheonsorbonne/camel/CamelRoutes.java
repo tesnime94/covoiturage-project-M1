@@ -20,7 +20,7 @@ public class CamelRoutes extends RouteBuilder {
                 .onException(Exception.class)
                 .log("Erreur lors de l'appel à Overpass : ${exception.message}")
                 .handled(true);
-        
+
         from("direct:nominatimReverse")
                 .routeId("nominatim-reverse-route")
                 .setHeader("CamelHttpMethod", constant("GET"))
@@ -34,6 +34,17 @@ public class CamelRoutes extends RouteBuilder {
                 .log("Requête envoyée à Nominatim : ${header.CamelHttpQuery}")
                 .log("Réponse brute Nominatim : ${body}");
 
+        from("direct:validateUser")
+                .log("Envoi de le mail utilisateur au service User pour validation")
+                .marshal().json()
+                .to("sjms2:M1.UserService")
+                .choice()
+                .when(body().isEqualTo("false"))
+                .log("Utilisateur introuvable")
+                .throwException(new RuntimeException("L'utilisateur n'existe pas dans la base de données"))
+                .otherwise()
+                .log("Utilisateur valide")
+                .end();
     }
 }
 

@@ -5,6 +5,7 @@ import fr.pantheonsorbonne.dao.TrajetPrincipalDAO;
 import fr.pantheonsorbonne.entity.SousTrajet;
 import fr.pantheonsorbonne.entity.TrajetPrincipal;
 import fr.pantheonsorbonne.exception.*;
+import fr.pantheonsorbonne.gateway.UserGateway;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.*;
@@ -25,26 +26,34 @@ public class TrajetService {
 
     @Inject
     SousTrajetDAO sousTrajetDAO;
+
     @Inject
     private ProducerTemplate producerTemplate;
+
     @Inject
     private TrajetPrincipalDAO trajetPrincipalDAO;
+
+    @Inject
+    private UserGateway userGateway;
 
     LocalDate today = LocalDate.now();
     LocalTime now = LocalTime.now();
 
 
     @Transactional
-    public TrajetPrincipal createTrajet(String villeDepart, String villeArrivee, LocalDate date, LocalTime horaire, Integer nombreDePlaces, Double prix, Long conducteurId) {
+    public TrajetPrincipal createTrajet(String villeDepart, String villeArrivee, LocalDate date, LocalTime horaire, Integer nombreDePlaces, Double prix, String conducteurMail) {
         // Validation des données d'entrée
+        userGateway.validateUserByMail(conducteurMail);
+        // check de l'existence du conducteur
+        if (!userGateway.validateUserByMail(conducteurMail)) {
+            throw new InvalidTrajetDataException("Le conducteur n'existe pas dans la base de données.");
+        }
+
         if (villeDepart == null || villeDepart.isEmpty() || villeArrivee == null || villeArrivee.isEmpty()) {
             throw new InvalidTrajetDataException("Les villes de départ et d'arrivée sont obligatoires.");
         }
         if (prix == null || prix <= 0) {
             throw new InvalidTrajetDataException("Le prix doit être supérieur à 0.");
-        }
-        if (conducteurId == null || conducteurId <= 0) {
-            throw new InvalidTrajetDataException("Un conducteur valide est obligatoire.");
         }
         if (nombreDePlaces == null || nombreDePlaces <= 0) {
             throw new InvalidTrajetDataException("Le nombre de places doit être supérieur à 0.");
@@ -64,7 +73,7 @@ public class TrajetService {
         trajetPrincipal.setHoraire(horaire);
         trajetPrincipal.setNbPlaces(nombreDePlaces);
         trajetPrincipal.setPrix(prix);
-        trajetPrincipal.setConducteurId(conducteurId);
+        trajetPrincipal.setConducteurMail(conducteurMail);
 
         // Appel de l'API pour récupérer les villes intermédiaires
         List<String> grandesVilles = callExternalApiForIntermediateCities(villeDepart, villeArrivee);

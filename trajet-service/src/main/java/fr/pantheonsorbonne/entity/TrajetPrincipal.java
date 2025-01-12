@@ -30,6 +30,16 @@ public class TrajetPrincipal {
     @Column(nullable = false)
     private Double prix;
 
+    @Column(nullable = false)
+    private Integer nbPlaces;
+
+    @Column(name = "conducteur_mail", nullable = false)
+    private String conducteurMail;
+
+    @OneToMany(mappedBy = "trajetPrincipal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore // pour eviter vite d'inclure les sous trajets automatiquement
+    private List<SousTrajet> sousTrajets = new ArrayList<>();
+
     public LocalTime getHoraire() {
         return horaire;
     }
@@ -45,16 +55,6 @@ public class TrajetPrincipal {
     public void setNbPlaces(Integer nbPlaces) {
         this.nbPlaces = nbPlaces;
     }
-
-    @Column(nullable = false)
-    private Integer nbPlaces;
-
-    @Column(name = "conducteur_id", nullable = false)
-    private Long conducteurId; // ID de l'utilisateur conducteur
-
-    @OneToMany(mappedBy = "trajetPrincipal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnore // pour eviter vite d'inclure les sous trajets automatiquement
-    private List<SousTrajet> sousTrajets = new ArrayList<>();
 
     // Getters et Setters
     public Long getId() {
@@ -89,12 +89,12 @@ public class TrajetPrincipal {
         this.prix = prix;
     }
 
-    public Long getConducteurId() {
-        return conducteurId;
+    public String getConducteurMail() {
+        return conducteurMail;
     }
 
-    public void setConducteurId(Long conducteurId) {
-        this.conducteurId = conducteurId;
+    public void setConducteurMail(String conducteurId) {
+        this.conducteurMail = conducteurMail;
     }
 
     public List<SousTrajet> getSousTrajets() {

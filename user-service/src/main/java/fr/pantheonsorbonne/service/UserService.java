@@ -15,6 +15,7 @@ public class UserService {
     @Inject
     UserDAO userDAO;
 
+    @Transactional
     public UserDTO getUserByID(Long id) {
         User user = userDAO.getById(id);
         if (user == null) {
@@ -26,7 +27,7 @@ public class UserService {
     @Transactional
     public Long checkAndSaveUser(UserDTO userDTO) throws InvalidUserException, UserAlreadyExistWithTheSameEmail {
         //vérification métier (email correct)
-        if (!userDTO.email().contains("@")){
+        if (!userDTO.email().contains("@")) {
             throw new InvalidUserException("email is malformed");
         }
         //verification existance de l'utilisateur
@@ -41,6 +42,11 @@ public class UserService {
         userDAO.saveUser(user);
         return user.getId();
     }
+
+    public User getUserByEmail(String email) {
+        return userDAO.getUserByEmail(email);
+    }
+
 }
 
 
