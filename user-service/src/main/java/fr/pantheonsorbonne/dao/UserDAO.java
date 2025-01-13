@@ -27,6 +27,7 @@ public class UserDAO {
         return em.find(User.class, id);
     }
 
+    @Transactional
     public User getUserByEmail(String email) {
         try {
             return em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)

@@ -11,6 +11,6 @@ public class CamelRoutes extends RouteBuilder {
                 .bean("userValidator", "validateUser")
                 .log("Résultat de la validation : ${body}")
                 .marshal().json()
-                .to("sjms2:M1.User.ValidationReply");
+                ;
     }
 }

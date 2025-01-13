@@ -38,10 +38,10 @@ public class CamelRoutes extends RouteBuilder {
                 .log("Envoi de l'email utilisateur au service User pour validation")
                 .marshal().json()
                 .to("sjms2:M1.UserService") // Envoi du message à UserService
-                .log("Message envoyé pour validation")
-                .to("sjms2:M1.User.ValidationReply") // Attente de la réponse
+                .unmarshal().json()
+                .log("réponse reçue: ${body}") // Attente de la réponse
                 .choice()
-                .when(body().isEqualTo("false"))
+                .when(body().isEqualTo(false))
                 .log("Utilisateur introuvable")
                 .throwException(new RuntimeException("L'utilisateur n'existe pas dans la base de données"))
                 .otherwise()
