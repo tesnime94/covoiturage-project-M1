@@ -56,7 +56,6 @@ public class TrajetPrincipal {
         this.nbPlaces = nbPlaces;
     }
 
-    // Getters et Setters
     public Long getId() {
         return id;
     }
@@ -93,7 +92,7 @@ public class TrajetPrincipal {
         return conducteurMail;
     }
 
-    public void setConducteurMail(String conducteurId) {
+    public void setConducteurMail(String conducteurMail) {
         this.conducteurMail = conducteurMail;
     }
 

@@ -26,6 +26,14 @@ public class TrajetPrincipalDAO {
                 .getSingleResult();
     }
 
+    public List<TrajetPrincipal> findByVilleDepart(String villeDepart) {
+        return em.createQuery(
+                        "SELECT t FROM TrajetPrincipal t WHERE t.villeDepart = :villeDepart",
+                        TrajetPrincipal.class)
+                .setParameter("villeDepart", villeDepart)
+                .getResultList();
+    }
+
 
     // Méthode pour récupérer tous les trajets principaux
     public List<TrajetPrincipal> findAll() {
@@ -40,6 +48,13 @@ public class TrajetPrincipalDAO {
             return true;
         }
         return false;
+    }
+
+    public List<TrajetPrincipal> findAllWithSousTrajets() {
+        return em.createQuery(
+                        "SELECT t FROM TrajetPrincipal t LEFT JOIN FETCH t.sousTrajets",
+                        TrajetPrincipal.class)
+                .getResultList();
     }
 
 }

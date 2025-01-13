@@ -25,4 +25,13 @@ public class SousTrajetDAO {
                 .setParameter("trajetPrincipalId", trajetPrincipalId)
                 .getResultList();
     }
+
+    public List<SousTrajet> findByVilleDepart(String villeDepart) {
+        return em.createQuery(
+                        "SELECT s FROM SousTrajet s WHERE s.villeDepart = :villeDepart",
+                        SousTrajet.class)
+                .setParameter("villeDepart", villeDepart)
+                .getResultList();
+    }
+
 }

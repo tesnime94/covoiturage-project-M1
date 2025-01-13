@@ -1,6 +1,7 @@
 package fr.pantheonsorbonne.resources;
 
 import fr.pantheonsorbonne.dto.CreateTrajetRequest;
+import fr.pantheonsorbonne.dto.TrajetAvecSousTrajetsDTO;
 import fr.pantheonsorbonne.dto.TrajetPrincipalDTO;
 import fr.pantheonsorbonne.entity.TrajetPrincipal;
 import fr.pantheonsorbonne.exception.TrajetNotFoundException;
@@ -79,4 +80,14 @@ public class TrajetResource {
         }
         return Response.status(Response.Status.NOT_FOUND).entity("Trajet non trouvé.").build();
     }
+
+    @GET
+    @Path("/with-sous-trajets")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllTrajetsWithSousTrajets() {
+        List<TrajetAvecSousTrajetsDTO> trajets = trajetService.getAllTrajetsWithSousTrajetsDTO();
+        return Response.ok(trajets).build();
+    }
+
+
 }

@@ -2,6 +2,8 @@ package fr.pantheonsorbonne.service;
 
 import fr.pantheonsorbonne.dao.SousTrajetDAO;
 import fr.pantheonsorbonne.dao.TrajetPrincipalDAO;
+import fr.pantheonsorbonne.dto.SousTrajetDTO;
+import fr.pantheonsorbonne.dto.TrajetAvecSousTrajetsDTO;
 import fr.pantheonsorbonne.entity.SousTrajet;
 import fr.pantheonsorbonne.entity.TrajetPrincipal;
 import fr.pantheonsorbonne.exception.*;
@@ -223,6 +225,31 @@ public class TrajetService {
 
     public boolean deleteTrajetById(Long id) {
         return trajetPrincipalDAO.deleteById(id);
+    }
+
+    public List<TrajetAvecSousTrajetsDTO> getAllTrajetsWithSousTrajetsDTO() {
+        List<TrajetPrincipal> trajets = trajetPrincipalDAO.findAllWithSousTrajets(); // Méthode DAO
+        return trajets.stream().map(trajet ->
+                new TrajetAvecSousTrajetsDTO(
+                        trajet.getId(),
+                        trajet.getVilleDepart(),
+                        trajet.getVilleArrivee(),
+                        trajet.getDate(),
+                        trajet.getHoraire(),
+                        trajet.getNbPlaces(),
+                        trajet.getPrix(),
+                        trajet.getConducteurMail(),
+                        trajet.getSousTrajets().stream()
+                                .map(sousTrajet -> new SousTrajetDTO(
+                                        sousTrajet.getId(),
+                                        sousTrajet.getVilleDepart(),
+                                        sousTrajet.getVilleArrivee(),
+                                        sousTrajet.getDate(),
+                                        sousTrajet.getHoraire()
+                                ))
+                                .toList()
+                )
+        ).toList();
     }
 
 
