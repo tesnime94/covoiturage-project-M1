@@ -6,20 +6,18 @@ import fr.pantheonsorbonne.dto.SousTrajetDTO;
 import fr.pantheonsorbonne.dto.TrajetAvecSousTrajetsDTO;
 import fr.pantheonsorbonne.entity.SousTrajet;
 import fr.pantheonsorbonne.entity.TrajetPrincipal;
-import fr.pantheonsorbonne.exception.*;
+import fr.pantheonsorbonne.exception.InvalidTrajetDataException;
+import fr.pantheonsorbonne.exception.TrajetNotFoundException;
+import fr.pantheonsorbonne.gateway.NominatimGateway;
+import fr.pantheonsorbonne.gateway.OverpassGateway;
 import fr.pantheonsorbonne.gateway.UserGateway;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.json.*;
 import jakarta.transaction.Transactional;
 import org.apache.camel.ProducerTemplate;
 
-import java.io.StringReader;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,6 +35,12 @@ public class TrajetService {
 
     @Inject
     private UserGateway userGateway;
+
+    @Inject
+    NominatimGateway nominatimGateway;
+
+    @Inject
+    OverpassGateway overpassGateway;
 
     LocalDate today = LocalDate.now();
     LocalTime now = LocalTime.now();
@@ -97,116 +101,28 @@ public class TrajetService {
 
 
     private List<String> callExternalApiForIntermediateCities(String villeDepart, String villeArrivee) {
-        String overpassQuery = buildOverpassQuery(villeDepart, villeArrivee);
-        String encodedQuery = URLEncoder.encode(overpassQuery, StandardCharsets.UTF_8);
-        System.out.println("Requête Overpass encodée : " + encodedQuery);
+        // Obtenir les coordonnées des villes via le NominatimGateway
+        double[] coordDepart = nominatimGateway.getCoordinates(villeDepart);
+        double[] coordArrivee = nominatimGateway.getCoordinates(villeArrivee);
 
-        String response;
-        try {
-            response = producerTemplate.requestBodyAndHeader(
-                    "direct:fetchIntermediateCities",
-                    null,
-                    "data",
-                    overpassQuery,
-                    String.class
-            );
-            System.out.println("Overpass Response: " + response);
-        } catch (Exception e) {
-            throw new OverpassApiException("Erreur lors de l'appel à Overpass API : " + e.getMessage(), e);
-        }
+        // Construire la requête Overpass
+        String overpassQuery = buildOverpassQuery(coordDepart, coordArrivee);
 
-        return parseOverpassResponse(response);
+        // Utiliser le OverpassGateway pour récupérer les villes intermédiaires
+        return overpassGateway.fetchIntermediateCities(overpassQuery);
     }
 
 
-    private String buildOverpassQuery(String villeDepart, String villeArrivee) {
-        double[] coordDepart = getCoordinates(villeDepart);
-        double[] coordArrivee = getCoordinates(villeArrivee);
-
-        System.out.printf("Coordonnées de %s : lat=%.6f, lon=%.6f%n", villeDepart, coordDepart[0], coordDepart[1]);
-        System.out.printf("Coordonnées de %s : lat=%.6f, lon=%.6f%n", villeArrivee, coordArrivee[0], coordArrivee[1]);
-
+    private String buildOverpassQuery(double[] coordDepart, double[] coordArrivee) {
         double south = Math.min(coordDepart[0], coordArrivee[0]);
         double west = Math.min(coordDepart[1], coordArrivee[1]);
         double north = Math.max(coordDepart[0], coordArrivee[0]);
         double east = Math.max(coordDepart[1], coordArrivee[1]);
-
+        
         // Conserver la requête en texte brut sans encodage
         return String.format(Locale.US, """
                 [out:json];(node["place"="city"](%.6f,%.6f,%.6f,%.6f););out body;
                 """, south, west, north, east);
-    }
-
-    private double[] getCoordinates(String ville) {
-        String response;
-        try {
-            response = producerTemplate.requestBodyAndHeader(
-                    "direct:nominatimSearch",
-                    null,
-                    "ville",
-                    ville,
-                    String.class
-            );
-            System.out.println("Réponse brute de Nominatim : " + response);
-        } catch (Exception e) {
-            throw new NominatimApiException("Erreur lors de l'appel à Nominatim API pour la ville : " + ville, e);
-        }
-
-        try (JsonReader reader = Json.createReader(new StringReader(response))) {
-            JsonArray jsonArray = reader.readArray();
-            if (jsonArray.isEmpty()) {
-                throw new NominatimApiException("Aucun résultat trouvé pour la ville : " + ville);
-            }
-
-            JsonObject jsonResponse = jsonArray.getJsonObject(0);
-            double lat = Double.parseDouble(jsonResponse.getString("lat"));
-            double lon = Double.parseDouble(jsonResponse.getString("lon"));
-
-            System.out.println("Latitude : " + lat + ", Longitude : " + lon);
-            return new double[]{lat, lon};
-        } catch (Exception e) {
-            throw new ResponseParsingException("Erreur pendant le parsing des coordonnées pour la ville : " + ville, e);
-        }
-    }
-
-
-    private List<String> parseOverpassResponse(String response) {
-        List<String> villes = new ArrayList<>();
-        System.out.println("Début du parsing de la réponse Overpass");
-        System.out.println("Réponse brute : " + response);
-
-        if (response == null || response.isEmpty()) {
-            throw new ResponseParsingException("La réponse Overpass est nulle ou vide.");
-        }
-
-        try (JsonReader reader = Json.createReader(new StringReader(response))) {
-            JsonObject jsonResponse = reader.readObject();
-            if (!jsonResponse.containsKey("elements")) {
-                throw new ResponseParsingException("La réponse Overpass ne contient pas de clé 'elements'.");
-            }
-
-            JsonArray elements = jsonResponse.getJsonArray("elements");
-            for (JsonValue value : elements) {
-                if (value.getValueType() == JsonValue.ValueType.OBJECT) {
-                    JsonObject element = value.asJsonObject();
-                    JsonObject tags = element.getJsonObject("tags");
-                    if (tags != null && tags.containsKey("name")) {
-                        String ville = tags.getString("name");
-                        villes.add(ville);
-                        System.out.println("Ville trouvée : " + ville);
-                    } else {
-                        System.out.println("Le champ 'name' est absent dans 'tags' : " + tags);
-                    }
-                } else {
-                    System.out.println("Un élément non-objet trouvé dans 'elements'. Ignoré.");
-                }
-            }
-        } catch (Exception e) {
-            throw new ResponseParsingException("Erreur pendant le parsing de la réponse Overpass.", e);
-        }
-
-        System.out.println("Villes extraites : " + villes);
-        return villes;
     }
 
 
