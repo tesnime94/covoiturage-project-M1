@@ -77,5 +77,14 @@ public class TrajetPrincipalDAO {
         return count > 0;
     }
 
+    public List<TrajetPrincipal> findWithSousTrajetsByVilleDepart(String villeDepart) {
+        return em.createQuery(
+                        "SELECT t FROM TrajetPrincipal t JOIN t.sousTrajets st WHERE t.villeDepart = :villeDepart",
+                        TrajetPrincipal.class
+                )
+                .setParameter("villeDepart", villeDepart)
+                .getResultList();
+    }
+
 
 }

@@ -65,6 +65,7 @@ public class TrajetResource {
     }
 
     @GET
+    @Path("all-trajets")
     public Response getAllTrajets() {
         List<TrajetPrincipal> trajets = trajetService.getAllTrajets();
         return Response.ok(trajets).build();
@@ -87,6 +88,12 @@ public class TrajetResource {
     public Response getAllTrajetsWithSousTrajets() {
         List<TrajetAvecSousTrajetsDTO> trajets = trajetService.getAllTrajetsWithSousTrajetsDTO();
         return Response.ok(trajets).build();
+    }
+
+    @GET
+    @Path("/with-sous-trajets/{villeDepart}")
+    public List<TrajetAvecSousTrajetsDTO> findByVilleDepart(@PathParam("villeDepart") String villeDepart) {
+        return trajetService.getTrajetsWithSousTrajetsByVilleDepart(villeDepart);
     }
 
 

@@ -169,5 +169,31 @@ public class TrajetService {
         ).toList();
     }
 
+    public List<TrajetAvecSousTrajetsDTO> getTrajetsWithSousTrajetsByVilleDepart(String villeDepart) {
+        List<TrajetPrincipal> trajets = trajetPrincipalDAO.findWithSousTrajetsByVilleDepart(villeDepart);
+
+        return trajets.stream().map(trajet ->
+                new TrajetAvecSousTrajetsDTO(
+                        trajet.getId(),
+                        trajet.getVilleDepart(),
+                        trajet.getVilleArrivee(),
+                        trajet.getDate(),
+                        trajet.getHoraire(),
+                        trajet.getNbPlaces(),
+                        trajet.getPrix(),
+                        trajet.getConducteurMail(),
+                        trajet.getSousTrajets().stream()
+                                .map(sousTrajet -> new SousTrajetDTO(
+                                        sousTrajet.getId(),
+                                        sousTrajet.getVilleDepart(),
+                                        sousTrajet.getVilleArrivee(),
+                                        sousTrajet.getDate(),
+                                        sousTrajet.getHoraire()
+                                ))
+                                .toList()
+                )
+        ).toList();
+    }
+
 
 }

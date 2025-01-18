@@ -15,12 +15,12 @@ public class SousTrajetResource {
 
     @Inject
     private SousTrajetDAO sousTrajetDAO;
-    
+
     @GET
     @Path("/{trajetPrincipalId}")
     public List<SousTrajet> getSousTrajetsByTrajetPrincipal(@PathParam("trajetPrincipalId") Long trajetPrincipalId) {
         return sousTrajetDAO.findByTrajetPrincipalId(trajetPrincipalId);
     }
-
+    
 
 }
