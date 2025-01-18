@@ -1,22 +1,20 @@
 ## Objectifs du système à modéliser
 
-Application : Plateforme de gestion de covoiturage en temps réel
+Application : Plateforme de gestion de covoiturage
 
-Créer une plateforme de covoiturage où les utilisateurs peuvent publier des trajets, rechercher des trajets disponibles, réserver une place, et suivre le trajet en temps réel.
+Créer une plateforme de covoiturage où les utilisateurs peuvent publier des trajets, rechercher des trajets disponibles et réserver une place.
 
 Fonctionnalités principales :
 
-Gestion des utilisateurs : Enregistrement, connexion et gestion du profil.
+Publication de trajets : Les conducteurs peuvent publier des trajets avec des détails comme la ville de départ, la destination, les horaires, le prix, et les places disponibles ou supprimer leurs trajets si ils changent d'avis.
 
-Gestion des rôles : conducteur ou passager.
+Creation de sous-trajets: Lorsqu'un conducteur créer un trajet, des sous-trajets sont automatiquement créer qui passe entre cette ville de déaprt et d'arrivée.
 
-Publication de trajets : Les conducteurs peuvent publier des trajets avec des détails comme la ville de départ, la destination, les horaires, le prix, et les places disponibles.
-
-Recherche et réservation de trajets : Recherche avancée de trajets (par localisation, date, prix, etc.)
+Recherche et réservation de trajets : Recherche de trajets (par localisation, date, prix, etc.)
 
 Réservation de places disponibles.
 
-Notifications en temps réel : Notifications pour les confirmations de réservation, les annulations, et les rappels de trajets.
+Notifications : Notifications pour les confirmations de réservation, les annulations et la demande de trajet au conducteur.
 
 
 ## Interfaces
