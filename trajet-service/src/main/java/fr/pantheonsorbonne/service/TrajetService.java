@@ -48,13 +48,14 @@ public class TrajetService {
 
     @Transactional
     public TrajetPrincipal createTrajet(String villeDepart, String villeArrivee, LocalDate date, LocalTime horaire, Integer nombreDePlaces, Double prix, String conducteurMail) {
-        // Validation des données d'entrée
-        userGateway.validateUserByMail(conducteurMail);
         // check de l'existence du conducteur
         if (!userGateway.validateUserByMail(conducteurMail)) {
             throw new InvalidTrajetDataException("Le conducteur n'existe pas dans la base de données.");
         }
-
+// Vérifier si le conducteur a déjà un trajet à cette date et cette heure
+        if (trajetPrincipalDAO.hasTrajetAtSameTime(conducteurMail, date, horaire)) {
+            throw new InvalidTrajetDataException("Le conducteur a déjà un trajet prévu à cette date et cette heure.");
+        }
         if (villeDepart == null || villeDepart.isEmpty() || villeArrivee == null || villeArrivee.isEmpty()) {
             throw new InvalidTrajetDataException("Les villes de départ et d'arrivée sont obligatoires.");
         }
@@ -118,7 +119,7 @@ public class TrajetService {
         double west = Math.min(coordDepart[1], coordArrivee[1]);
         double north = Math.max(coordDepart[0], coordArrivee[0]);
         double east = Math.max(coordDepart[1], coordArrivee[1]);
-        
+
         // Conserver la requête en texte brut sans encodage
         return String.format(Locale.US, """
                 [out:json];(node["place"="city"](%.6f,%.6f,%.6f,%.6f););out body;

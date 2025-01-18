@@ -5,6 +5,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @ApplicationScoped
@@ -56,5 +58,24 @@ public class TrajetPrincipalDAO {
                         TrajetPrincipal.class)
                 .getResultList();
     }
+
+    public boolean hasTrajetAtSameTime(String emailConducteur, LocalDate date, LocalTime horaire) {
+        String query = """
+                SELECT COUNT(tp)
+                FROM TrajetPrincipal tp
+                WHERE tp.conducteurMail = :emailConducteur
+                AND tp.date = :date
+                AND tp.horaire = :horaire
+                """;
+
+        Long count = em.createQuery(query, Long.class)
+                .setParameter("emailConducteur", emailConducteur)
+                .setParameter("date", date)
+                .setParameter("horaire", horaire)
+                .getSingleResult();
+
+        return count > 0;
+    }
+
 
 }
