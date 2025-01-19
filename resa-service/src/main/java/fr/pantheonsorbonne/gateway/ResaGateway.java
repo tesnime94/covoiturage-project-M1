@@ -1,11 +1,13 @@
 package fr.pantheonsorbonne.gateway;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.ProducerTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@ApplicationScoped
 public class ResaGateway {
 
     @Inject
