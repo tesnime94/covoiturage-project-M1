@@ -16,4 +16,6 @@ public class ResaDAO {
     }
 
 
+    public Resa findById(Long id) {
+    }
 }

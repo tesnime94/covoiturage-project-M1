@@ -1,6 +1,10 @@
 package fr.pantheonsorbonne.resources;
 
+import fr.pantheonsorbonne.dto.CreateResaRequest;
 import fr.pantheonsorbonne.dto.ResaDTO;
+import fr.pantheonsorbonne.entity.Resa;
+import fr.pantheonsorbonne.exception.PaymentException;
+import fr.pantheonsorbonne.exception.ResaNotFoundException;
 import fr.pantheonsorbonne.service.ResaService;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -25,30 +29,28 @@ public class ResaResource {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("Reservation not found with id: " + id)
                     .build(); // Retourne un 404 si la réservation n'existe pas
+        } catch (ResaNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @POST
     @Transactional
     public Response createResa(CreateResaRequest request) {
         try {
-            TrajetPrincipal trajetPrincipal = trajetService.createTrajet(
-                    request.getVilleDepart(),
-                    request.getVilleArrivee(),
-                    request.getDate(),
-                    request.getHoraire(),
-                    request.getNombreDePlaces(),
-                    request.getPrix(),
-                    request.getConducteurMail()
+            Resa resa = resaService.createResa(
+                    request.getTrajetNumber(),
+                    request.getAmount(),
+                    request.getCardHolderName(),
+                    request.getCardNumber(),
+                    request.getExpirationDate(),
+                    request.getCvc()
             );
-            return Response.ok(trajetPrincipal).build();
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erreur lors de la création du trajet : " + e.getMessage()).build();
+            return Response.ok(resa).build();
+        } catch (PaymentException e) {
+            throw new RuntimeException(e);
         }
     }
 }

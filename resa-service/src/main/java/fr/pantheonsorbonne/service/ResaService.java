@@ -5,6 +5,7 @@ import fr.pantheonsorbonne.dao.ResaDAO;
 import fr.pantheonsorbonne.dto.ResaDTO;
 import fr.pantheonsorbonne.entity.Resa;
 import fr.pantheonsorbonne.exception.PaymentException;
+import fr.pantheonsorbonne.exception.ResaNotFoundException;
 import fr.pantheonsorbonne.gateway.ResaGateway;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -23,13 +24,20 @@ public class ResaService {
     @Inject
     private ResaDAO resaDAO;
 
-    public ResaDTO getResaById(Long id) {
+    public Resa getResaById(Long id) throws ResaNotFoundException {
+
+        Resa resa = resaDAO.findById(id);
+        if (resa == null) {
+            throw new ResaNotFoundException("Resa avec ID " + id + " non trouvée.");
+        }
+        return resa;
     }
 
     @Transactional
-    public Resa createResa(Long trajetNumber, Long amount, String cardHolderName, Long cardNumber, String expirationDate, int cvc, String paymentResponse) throws PaymentException {
+    public Resa createResa(Long trajetNumber, Long amount, String cardHolderName, Long cardNumber, String expirationDate, int cvc) throws PaymentException {
 
-        if (!resaGateway.processPayment(paymentResponse)) {
+
+        if (!resaGateway.processPayment()) {
             throw new PaymentException("Le paiement a échoué. Veuillez vérifier vos informations.");
         }
 
@@ -40,7 +48,6 @@ public class ResaService {
         resa.setCardNumber(cardNumber);
         resa.setExpirationDate(expirationDate);
         resa.setCvc(cvc);
-        resa.setPaymentResponse(paymentResponse);
 
         resaDAO.save(resa);
         return resa;
