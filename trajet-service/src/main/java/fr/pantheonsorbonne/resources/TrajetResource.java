@@ -27,13 +27,13 @@ public class TrajetResource {
     public Response createTrajet(CreateTrajetRequest request) {
         try {
             TrajetPrincipal trajetPrincipal = trajetService.createTrajet(
-                    request.getVilleDepart(),
-                    request.getVilleArrivee(),
-                    request.getDate(),
-                    request.getHoraire(),
-                    request.getNombreDePlaces(),
-                    request.getPrix(),
-                    request.getConducteurMail()
+                    request.villeDepart(),
+                    request.villeArrivee(),
+                    request.date(),
+                    request.horaire(),
+                    request.nombreDePlaces(),
+                    request.prix(),
+                    request.conducteurMail()
             );
             return Response.ok(trajetPrincipal).build();
         } catch (IllegalArgumentException e) {
