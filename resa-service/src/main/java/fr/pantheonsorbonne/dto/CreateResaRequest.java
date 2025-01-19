@@ -14,6 +14,8 @@ public class CreateResaRequest {
 
     private int cvc;
 
+    private String userEmail;
+
     public Long getTrajetNumber() {
         return trajetNumber;
     }
@@ -60,5 +62,13 @@ public class CreateResaRequest {
 
     public void setCvc(int cvc) {
         this.cvc = cvc;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 }

@@ -34,7 +34,7 @@ public class ResaService {
     }
 
     @Transactional
-    public Resa createResa(Long trajetNumber, Long amount, String cardHolderName, Long cardNumber, String expirationDate, int cvc) throws PaymentException {
+    public Resa createResa(Long trajetNumber, Long amount, String cardHolderName, Long cardNumber, String expirationDate, int cvc, String userEmail) throws PaymentException {
 
 
         if (!resaGateway.processPayment(trajetNumber, amount, cardHolderName, cardNumber, expirationDate, cvc)) {
@@ -50,6 +50,9 @@ public class ResaService {
         resa.setCvc(cvc);
 
         resaDAO.save(resa);
+
+        resaGateway.sendConfirmationNotification(userEmail, resa.getResaNumber());
+
         return resa;
 
     }

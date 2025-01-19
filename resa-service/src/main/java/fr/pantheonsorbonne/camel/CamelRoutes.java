@@ -20,5 +20,11 @@ public class CamelRoutes extends RouteBuilder {
                 .log("Paiement validé avec succès")
                 .end();
 
+        from("direct:sendConfirmationNotification")
+                .log("Envoi de la notification pour réservation : ${body}")
+                .marshal().json() // Convertir le message en JSON
+                .to("sjms2:M1.NotificationService") // Envoi au microservice Notification via le broker
+                .log("Notification envoyée avec succès : ${body}");
+
     }
 }

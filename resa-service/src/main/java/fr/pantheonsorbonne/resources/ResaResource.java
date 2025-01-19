@@ -51,7 +51,8 @@ public class ResaResource {
                     request.getCardHolderName(),
                     request.getCardNumber(),
                     request.getExpirationDate(),
-                    request.getCvc()
+                    request.getCvc(),
+                    request.getUserEmail()
             );
             return Response.ok(resa).build();
         } catch (PaymentException e) {

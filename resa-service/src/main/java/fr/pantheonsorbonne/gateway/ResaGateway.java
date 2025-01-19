@@ -27,4 +27,12 @@ public class ResaGateway {
         // Retourner la réponse du service Payment (true ou false)
         return Boolean.parseBoolean(response.toString());
     }
+
+    public void sendConfirmationNotification(String userEmail, Long reservationNumber) {
+        Map<String, Object> notificationDetails = new HashMap<>();
+        notificationDetails.put("userEmail", userEmail);
+        notificationDetails.put("reservationNumber", reservationNumber);
+
+        producerTemplate.sendBody("direct:sendConfirmationNotification", notificationDetails);
+    }
 }
