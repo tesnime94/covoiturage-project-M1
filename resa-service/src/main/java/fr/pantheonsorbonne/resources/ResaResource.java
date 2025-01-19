@@ -23,12 +23,17 @@ public class ResaResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getResaById(@PathParam("id") Long id) {
         try {
-            ResaDTO resaDTO = resaService.getResaById(id);
-            return Response.ok(resaDTO).build(); // Retourne un 200 OK avec le résultat JSON
-        } catch (NotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Reservation not found with id: " + id)
-                    .build(); // Retourne un 404 si la réservation n'existe pas
+            Resa resa = resaService.getResaById(id);
+            ResaDTO dto = new ResaDTO(
+                    resa.getResaNumber(),
+                    resa.getTrajetNumber(),
+                    resa.getAmount(),
+                    resa.getCardHolderName(),
+                    resa.getCardNumber(),
+                    resa.getExpirationDate(),
+                    resa.getCvc()
+            );
+            return Response.ok(dto).build();
         } catch (ResaNotFoundException e) {
             throw new RuntimeException(e);
         }

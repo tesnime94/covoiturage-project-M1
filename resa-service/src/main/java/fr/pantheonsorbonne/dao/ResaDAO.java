@@ -16,6 +16,11 @@ public class ResaDAO {
     }
 
 
-    public Resa findById(Long id) {
+    public Resa findById(Long resaNumber) {
+        return em.createQuery(
+                        "SELECT r FROM Resa r WHERE r.resaNumber = :resaNumber", Resa.class
+                )
+                .setParameter("resaNumber", resaNumber)
+                .getSingleResult();
     }
 }

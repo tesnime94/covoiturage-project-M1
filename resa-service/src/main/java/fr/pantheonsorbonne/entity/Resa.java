@@ -36,9 +36,6 @@ public class Resa {
     @Column(nullable = false)
     private int cvc;
 
-    @Column(nullable = false)
-    private String paymentResponse;
-
 
     public Long getResaNumber() {
         return resaNumber;
@@ -88,13 +85,6 @@ public class Resa {
         this.cvc = cvc;
     }
 
-    public String getPaymentResponse() {
-        return paymentResponse;
-    }
-
-    public void setPaymentResponse(String paymentResponse) {
-        this.paymentResponse = paymentResponse;
-    }
 
     public Long getTrajetNumber() {
         return trajetNumber;
