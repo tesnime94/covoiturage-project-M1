@@ -13,8 +13,10 @@ public class CamelRoutes extends RouteBuilder {
                 .choice()
                 .when(simple("${body} == true"))
                 .log("Paiement validé")
+                .to("sjms2:M1.ResaService")
                 .otherwise()
                 .log("Paiement refusé")
+                .to("sjms2:M1.ResaService")
                 .end();
 
     }
