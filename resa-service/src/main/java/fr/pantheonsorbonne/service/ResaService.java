@@ -37,7 +37,7 @@ public class ResaService {
     public Resa createResa(Long trajetNumber, Long amount, String cardHolderName, Long cardNumber, String expirationDate, int cvc) throws PaymentException {
 
 
-        if (!resaGateway.processPayment()) {
+        if (!resaGateway.processPayment(trajetNumber, amount, cardHolderName, cardNumber, expirationDate, cvc)) {
             throw new PaymentException("Le paiement a échoué. Veuillez vérifier vos informations.");
         }
 
