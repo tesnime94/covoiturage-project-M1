@@ -5,7 +5,7 @@ import java.util.List;
 import fr.pantheonsorbonne.dao.SousTrajetDAO;
 import fr.pantheonsorbonne.dao.TrajetDAO;
 import fr.pantheonsorbonne.dto.SousTrajetDTO;
-import fr.pantheonsorbonne.dto.TrajetDTO;
+import fr.pantheonsorbonne.dto.TrajetWithSTDTO;
 import fr.pantheonsorbonne.entity.SousTrajet;
 import fr.pantheonsorbonne.entity.Trajet;
 import fr.pantheonsorbonne.gateway.TrajetGateway;
@@ -29,34 +29,46 @@ public class TrajetService {
     public void synchroniserTrajets(String villeDepart) {
         try {
             // Étape 1 : Récupérer les trajets depuis le microservice Trajet
-            List<TrajetDTO> trajetsDTO = trajetGateway.getTrajets(villeDepart);
+            List<TrajetWithSTDTO> trajetsWithSTDTO = trajetGateway.getTrajets(villeDepart);
 
             // Étape 2 : Parcourir et enregistrer chaque trajet principal
-            for (TrajetDTO trajetDTO : trajetsDTO) {
-                Trajet trajet = new Trajet();
-                trajet.setVilleDepart(trajetDTO.villeDepart());
-                trajet.setVilleArrivee(trajetDTO.villeArrivee());
-                trajet.setDate(trajetDTO.date());
-                trajet.setHoraire(trajetDTO.horaire());
-                trajet.setNombreDePlaces(trajetDTO.placeDisponible()); // Initialise placeDisponible avec nombreDePlaces
-                trajet.setPlaceDisponible(trajetDTO.placeDisponible());
-                trajet.setPrix(trajetDTO.prix());
-                trajet.setConducteurMail(trajetDTO.conducteurMail());
-                trajetDAO.save(trajet);
+            for (TrajetWithSTDTO trajetDTO : trajetsWithSTDTO) {
+                // On récupère l'id des trajets et on ajoute les trajets que si ils ne sont pas déja dans la bdd
 
-                // Étape 3 : Enregistrer les sous-trajets associés , on ne récupère pas l'horaire
-                if (trajetDTO.sousTrajets() != null) {
-                    for (SousTrajetDTO sousTrajetDTO : trajetDTO.sousTrajets()) {
-                        SousTrajet sousTrajet = new SousTrajet();
-                        sousTrajet.setVilleDepart(sousTrajetDTO.villeDepart());
-                        sousTrajet.setVilleArrivee(sousTrajetDTO.villeArrivee());
-                        sousTrajet.setDate(sousTrajetDTO.date());
-                        sousTrajet.setTrajet(trajet); // On Associe le sous-trajet au trajet principal
-                        sousTrajetDAO.save(sousTrajet);
-                    }
-                }
+                Long idTrajet=trajetDTO.id();
+                if(!trajetDAO.isPresent(idTrajet)){
+            
+                    
+                    // Créer un nouveau Trajet et le remplir
+                    Trajet trajet = new Trajet();
+                    trajet.setVilleDepart(trajetDTO.villeDepart());
+                    trajet.setVilleArrivee(trajetDTO.villeArrivee());
+                    trajet.setDate(trajetDTO.date());
+                    trajet.setHoraire(trajetDTO.horaire());
+                    trajet.setNombreDePlaces(trajetDTO.placeDisponible()); // Initialise placeDisponible avec nombreDePlaces
+                    trajet.setPlaceDisponible(trajetDTO.placeDisponible());
+                    trajet.setPrix(trajetDTO.prix());
+                    trajet.setConducteurMail(trajetDTO.conducteurMail());
+                    trajetDAO.save(trajet);
+
+        // Étape 3 : Enregistrer les sous-trajets associés, si présents
+                        if (trajetDTO.sousTrajets() != null) {
+                                for (SousTrajetDTO sousTrajetDTO : trajetDTO.sousTrajets()) {
+                                    SousTrajet sousTrajet = new SousTrajet();
+                                    sousTrajet.setVilleDepart(sousTrajetDTO.villeDepart());
+                                    sousTrajet.setVilleArrivee(sousTrajetDTO.villeArrivee());
+                                    sousTrajet.setDate(sousTrajetDTO.date());
+                                    sousTrajet.setTrajet(trajet); // Associer le sous-trajet au trajet principal
+                                    sousTrajetDAO.save(sousTrajet);
             }
-        } catch (Exception e) {
+        }
+    }
+}
+
+
+            
+        } 
+        catch (Exception e) {
             throw new RuntimeException("Erreur lors de la synchronisation des trajets : " + e.getMessage(), e);
         }
     }

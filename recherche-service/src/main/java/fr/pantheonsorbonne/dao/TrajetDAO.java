@@ -25,6 +25,15 @@ public class TrajetDAO {
         return entityManager.find(Trajet.class, id);
     }
 
+    public boolean isPresent(Long id) {
+        Long count = entityManager.createQuery(
+                "SELECT COUNT(t) FROM Trajet t WHERE t.id = :id", Long.class)
+                .setParameter("id", id)
+                .getSingleResult();
+        return count > 0;
+    }
+    
+
     public List <Trajet> findTrajetByCriteria (String villeDepart, String villeArrivee, LocalDate date, LocalTime horaire, Double prix){
         String request = "SELECT t FROM Trajet t " +
                       "WHERE t.villeDepart = :villeDepart " +

@@ -55,8 +55,8 @@ public Response afficherhistorique() {
 }
 
 @POST 
-@Path("/seed-data")
-public Response seedData() {
+@Path("/Test-data")
+public Response InsertTestData() {
     try {
         // la méthode pour insérer les données
         rechercheService.initialiserDonneesDeTest();

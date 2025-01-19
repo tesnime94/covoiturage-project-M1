@@ -60,20 +60,20 @@ public class RechercheService {
         // Étape 3 : Recherche des trajets principaux
         List<Trajet> trajetsTrouves = trajetDAO.findTrajetByCriteria(villeDepart, villeArrivee, date, horaire, prix);
         if (!trajetsTrouves.isEmpty()) {
-            return new ResultatDTO(true, "Nous avons trouvés des trajets correspondant à votre recherche.",
+            return new ResultatDTO(true,true, "Nous avons trouvés des trajets correspondant à votre recherche.",
                     rechercherEtConvertir(trajetsTrouves));
         }
 
         // Étape 4 : Recherche dans les sous-trajets
         trajetsTrouves = sousTrajetDAO.findSousTrajetByCriteria(villeDepart, villeArrivee, date, horaire, prix);
         if (!trajetsTrouves.isEmpty()) {
-            return new ResultatDTO(true,
+            return new ResultatDTO(true, false,
                     String.format("Nous avons seulement trouvés des trajets qui passent par %s. Nous allons contacter les conducteurs pour vérifier si ils acceptent de vous déposer à Lyon.", villeArrivee),
                     rechercherEtConvertir(trajetsTrouves));
         }
 
         // Étape 5 : Aucun résultat trouvé
-        return new ResultatDTO(false, "Aucun trajet ne correspond à votre recherche.", null);
+        return new ResultatDTO(false,false, "Aucun trajet ne correspond à votre recherche.", null);
     }
 
     // Méthode pour convertir une liste de trajets en DTO
@@ -95,8 +95,8 @@ public class RechercheService {
                 trajet.getHoraire(),
                 trajet.getPlaceDisponible(),
                 trajet.getPrix(),
-                trajet.getConducteurMail(),
-                List.of() // Sous-trajets à ajouter si nécessaire, mais pas besoin de les avoir lors du resultat
+                trajet.getConducteurMail()
+               
         );
     }
 }

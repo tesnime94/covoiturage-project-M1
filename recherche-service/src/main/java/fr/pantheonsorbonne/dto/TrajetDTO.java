@@ -3,7 +3,6 @@ package fr.pantheonsorbonne.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 public record TrajetDTO(
     Long id,
@@ -13,8 +12,8 @@ public record TrajetDTO(
     LocalTime horaire,
     Integer placeDisponible, 
     Double prix,
-    String conducteurMail,
-    List<SousTrajetDTO> sousTrajets //  Les Sous-trajets associés au trajet
+    String conducteurMail
+   
 ) {}
 
 
