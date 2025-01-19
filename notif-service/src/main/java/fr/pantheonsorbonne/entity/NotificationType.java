@@ -1,7 +1,7 @@
 package fr.pantheonsorbonne.entity;
 
 public enum NotificationType {
-    RESERVATION_CONFIRMATION, // Confirmation de réservation
-    TRAJET_REMINDER,          // Rappel pour un trajet
-    RESERVATION_CANCELLATION  // Annulation d'une réservation
+    RESERVATION_CONFIRMED, // Pour confirmer une réservation
+    RESERVATION_CANCELLED, // Pour une annulation de réservation
+    TRAJET_REMINDER        // Pour un rappel de trajet
 }
