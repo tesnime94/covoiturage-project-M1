@@ -6,6 +6,8 @@ import jakarta.inject.Inject;
 import org.apache.camel.builder.RouteBuilder;
 import org.jboss.logging.Logger;
 
+import java.util.Map;
+
 @ApplicationScoped
 public class CamelRoutes extends RouteBuilder {
 
@@ -19,17 +21,25 @@ public class CamelRoutes extends RouteBuilder {
         from("sjms2:M1.NotifService")
                 .log("Réception d'une demande de notification : ${body}")
                 .process(exchange -> {
-                    // Extraire les détails de la notification
-                    String recipientEmail = exchange.getIn().getHeader("userEmail", String.class);
-                    Long reservationNumber = exchange.getIn().getHeader("reservationNumber", Long.class);
+                    // Assurez-vous que le corps est traité comme un Map
+                    Map<String, Object> notificationDetails = exchange.getIn().getBody(Map.class);
 
-                    if (recipientEmail != null && reservationNumber != null) {
-                        // Appeler le service pour envoyer l'e-mail
-                        notificationService.sendNotification(recipientEmail, reservationNumber);
+                    if (notificationDetails != null) {
+                        String recipientEmail = (String) notificationDetails.get("userEmail");
+                        Long reservationNumber = Long.valueOf(notificationDetails.get("reservationNumber").toString());
+
+                        if (recipientEmail != null && reservationNumber != null) {
+                            // Appeler le service pour envoyer l'e-mail
+                            notificationService.sendNotification(recipientEmail, reservationNumber);
+                        } else {
+                            LOG.error("Les informations de notification sont incomplètes.");
+                        }
                     } else {
-                        LOG.error("Les informations de notification sont incomplètes.");
+                        LOG.error("Le corps du message est vide ou incorrect.");
                     }
                 })
                 .log("Notification traitée avec succès.");
     }
+
+
 }

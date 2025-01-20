@@ -1,12 +1,15 @@
 package fr.pantheonsorbonne.service;
 
-import io.quarkus.mailer.Mailer;
 import io.quarkus.mailer.Mail;
+import io.quarkus.mailer.Mailer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class NotificationService {
+
+    private static final Logger LOG = Logger.getLogger(NotificationService.class);
 
     @Inject
     Mailer mailer;
@@ -18,6 +21,11 @@ public class NotificationService {
                 reservationNumber
         );
 
-        mailer.send(Mail.withText(recipientEmail, subject, body));
+        try {
+            mailer.send(Mail.withText(recipientEmail, subject, body));
+            LOG.infof("Email envoyé avec succès à %s pour la réservation %d", recipientEmail, reservationNumber);
+        } catch (Exception e) {
+            LOG.error("Erreur lors de l'envoi de l'email : ", e);
+        }
     }
 }
