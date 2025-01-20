@@ -10,7 +10,7 @@ public class CamelRoutes extends RouteBuilder {
     @Override
     public void configure() {
         from("direct:getTrajets")
-            .routeId("GetTrajetsRoute")
+            //.routeId("GetTrajetsRoute")
             .log("Demande de trajets pour la ville : ${body}")
 
             // Appel au service Trajet via JMS
