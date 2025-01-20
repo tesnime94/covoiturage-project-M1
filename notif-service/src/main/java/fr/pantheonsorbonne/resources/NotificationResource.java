@@ -1,8 +1,12 @@
 package fr.pantheonsorbonne.resources;
 
-import fr.pantheonsorbonne.entity.Notification;
+import fr.pantheonsorbonne.dto.CreateNotificationRequest;
+import fr.pantheonsorbonne.dto.NotificationDTO;
 import fr.pantheonsorbonne.entity.NotificationType;
 import fr.pantheonsorbonne.service.NotificationService;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -14,21 +18,36 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class NotificationResource {
 
-    private final NotificationService notificationService;
+    @Inject
+    private NotificationService notificationService;
 
-    public NotificationResource(NotificationService notificationService) {
-        this.notificationService = notificationService;
-    }
-
+    /**
+     * Endpoint pour créer une nouvelle notification.
+     *
+     * @param request Les détails de la notification à créer.
+     * @return La notification créée.
+     */
     @POST
-    public Response createNotification(Notification notification) {
-        notificationService.createNotification(notification.userId, notification.message, notification.type);
-        return Response.status(Response.Status.CREATED).build();
+    @Transactional
+    public Response createNotification(@Valid CreateNotificationRequest request) {
+        NotificationType type = request.getType();
+        String userId = request.getUserId();
+        String message = request.getMessage();
+
+        var notification = notificationService.createNotification(userId, message, type);
+        return Response.status(Response.Status.CREATED).entity(notification).build();
     }
 
+    /**
+     * Endpoint pour récupérer les notifications d'un utilisateur.
+     *
+     * @param userId L'ID de l'utilisateur dont les notifications doivent être récupérées.
+     * @return Liste des notifications.
+     */
     @GET
     @Path("/{userId}")
-    public List<Notification> getNotifications(@PathParam("userId") String userId) {
-        return notificationService.getNotificationsForUser(userId);
+    public Response getNotificationsByUserId(@PathParam("userId") String userId) {
+        List<NotificationDTO> notifications = notificationService.getNotificationsByUserId(userId);
+        return Response.ok(notifications).build();
     }
 }

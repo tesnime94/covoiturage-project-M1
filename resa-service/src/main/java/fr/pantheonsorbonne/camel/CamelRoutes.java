@@ -9,7 +9,7 @@ public class CamelRoutes extends RouteBuilder {
         from("direct:processPayment")
                 .log("Envoi des détails du paiement au service Payment pour traitement")
                 .marshal().json() // Conversion en JSON avant l'envoi
-                .to("sjms2:M1.PayementService") // Envoi du message au service Payment via un broker
+                .to("sjms2:M1.PaymentService") // Envoi du message au service Payment via un broker
                 .unmarshal().json() // Conversion de la réponse en objet utilisable
                 .log("Réponse reçue : ${body}") // Log de la réponse reçue
                 .choice()

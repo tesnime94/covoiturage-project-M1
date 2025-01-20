@@ -13,5 +13,7 @@ public class CamelRoutes extends RouteBuilder {
                 .log("Résultat de la paiement : ${body}")
                 .marshal().json();
 
+              
+
     }
 }

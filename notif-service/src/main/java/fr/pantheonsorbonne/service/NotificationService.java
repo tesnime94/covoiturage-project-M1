@@ -1,46 +1,57 @@
 package fr.pantheonsorbonne.service;
 
 import fr.pantheonsorbonne.dao.NotificationDAO;
+import fr.pantheonsorbonne.dto.NotificationDTO;
 import fr.pantheonsorbonne.entity.Notification;
 import fr.pantheonsorbonne.entity.NotificationType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.eclipse.microprofile.reactive.messaging.Channel;
-import org.eclipse.microprofile.reactive.messaging.Emitter;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class NotificationService {
 
-    private final NotificationDAO notificationDAO;
-
     @Inject
-    @Channel("notifications") // Channel Kafka configuré dans application.properties
-    Emitter<String> notificationEmitter;
+    private NotificationDAO notificationDAO;
 
-    public NotificationService(NotificationDAO notificationDAO) {
-        this.notificationDAO = notificationDAO;
-    }
-
+    /**
+     * Créer une nouvelle notification et la sauvegarder en base de données.
+     *
+     * @param userId  ID de l'utilisateur
+     * @param message Contenu de la notification
+     * @param type    Type de notification
+     * @return Notification créée
+     */
     @Transactional
-    public void createNotification(String userId, String message, NotificationType type) {
-        // Sauvegarde dans la base de données
+    public Notification createNotification(String userId, String message, NotificationType type) {
         Notification notification = new Notification();
-        notification.userId = userId;
-        notification.message = message;
-        notification.type = type;
-        notification.timestamp = LocalDateTime.now();
-        notificationDAO.persist(notification);
+        notification.setUserId(userId);
+        notification.setMessage(message);
+        notification.setType(type);
 
-        // Envoi de l'événement au topic Kafka
-        String event = String.format("Notification for user %s: %s", userId, message);
-        notificationEmitter.send(event);
+        notificationDAO.save(notification);
+        return notification;
     }
 
-    public List<Notification> getNotificationsForUser(String userId) {
-        return notificationDAO.find("userId", userId).list();
+    /**
+     * Récupérer toutes les notifications d'un utilisateur donné.
+     *
+     * @param userId ID de l'utilisateur
+     * @return Liste des notifications sous forme de DTO
+     */
+    public List<NotificationDTO> getNotificationsByUserId(String userId) {
+        List<Notification> notifications = notificationDAO.findByUserId(userId);
+        return notifications.stream()
+                .map(n -> new NotificationDTO(
+                        n.getId(),
+                        n.getUserId(),
+                        n.getMessage(),
+                        n.getType(),
+                        n.getCreatedAt()
+                ))
+                .collect(Collectors.toList());
     }
 }
