@@ -13,6 +13,7 @@ import fr.pantheonsorbonne.gateway.OverpassGateway;
 import fr.pantheonsorbonne.gateway.UserGateway;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.transaction.Transactional;
 import org.apache.camel.ProducerTemplate;
 
@@ -21,6 +22,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
 
+@Named("customTrajetService")
 @ApplicationScoped
 public class TrajetService {
 
@@ -169,6 +171,7 @@ public class TrajetService {
         ).toList();
     }
 
+    @Transactional
     public List<TrajetAvecSousTrajetsDTO> getTrajetsWithSousTrajetsByVilleDepart(String villeDepart) {
         List<TrajetPrincipal> trajets = trajetPrincipalDAO.findWithSousTrajetsByVilleDepart(villeDepart);
 

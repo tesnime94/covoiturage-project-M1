@@ -4,6 +4,7 @@ import fr.pantheonsorbonne.entity.TrajetPrincipal;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -77,6 +78,7 @@ public class TrajetPrincipalDAO {
         return count > 0;
     }
 
+    @Transactional
     public List<TrajetPrincipal> findWithSousTrajetsByVilleDepart(String villeDepart) {
         return em.createQuery(
                         "SELECT t FROM TrajetPrincipal t JOIN t.sousTrajets st WHERE t.villeDepart = :villeDepart",

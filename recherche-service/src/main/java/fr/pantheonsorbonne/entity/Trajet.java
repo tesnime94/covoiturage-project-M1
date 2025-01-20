@@ -1,17 +1,10 @@
 package fr.pantheonsorbonne.entity;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "trajet")
@@ -56,7 +49,7 @@ public class Trajet {
 
     public void setNombreDePlaces(Integer nombreDePlaces) {
         this.nombreDePlaces = nombreDePlaces;
-        this.placeDisponible = nombreDePlaces; 
+        this.placeDisponible = nombreDePlaces;
     }
 
     public Integer getPlaceDisponible() {
@@ -131,5 +124,5 @@ public class Trajet {
         this.sousTrajets = sousTrajets;
     }
 
-   
+
 }

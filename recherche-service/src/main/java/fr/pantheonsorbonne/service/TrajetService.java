@@ -1,21 +1,24 @@
 package fr.pantheonsorbonne.service;
 
-import java.util.List;
-
 import fr.pantheonsorbonne.dao.SousTrajetDAO;
 import fr.pantheonsorbonne.dao.TrajetDAO;
 import fr.pantheonsorbonne.dto.SousTrajetDTO;
-import fr.pantheonsorbonne.dto.TrajetDTO;
+import fr.pantheonsorbonne.dto.TrajetCompletDTO;
 import fr.pantheonsorbonne.entity.SousTrajet;
 import fr.pantheonsorbonne.entity.Trajet;
 import fr.pantheonsorbonne.gateway.TrajetGateway;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 @ApplicationScoped
 public class TrajetService {
 
+    private static final Logger log = LoggerFactory.getLogger(TrajetService.class);
     @Inject
     private TrajetDAO trajetDAO;
 
@@ -28,18 +31,21 @@ public class TrajetService {
     @Transactional
     public void synchroniserTrajets(String villeDepart) {
         try {
+            //System.out.println("bien recuperer et convertit en dto");
+
             // Étape 1 : Récupérer les trajets depuis le microservice Trajet
-            List<TrajetDTO> trajetsDTO = trajetGateway.getTrajets(villeDepart);
+            List<TrajetCompletDTO> trajetsDTO = trajetGateway.getTrajets(villeDepart);
 
             // Étape 2 : Parcourir et enregistrer chaque trajet principal
-            for (TrajetDTO trajetDTO : trajetsDTO) {
+            for (TrajetCompletDTO trajetDTO : trajetsDTO) {
+                System.out.println("TETFETFVDGEVBFGDXRB" + trajetDTO);
                 Trajet trajet = new Trajet();
                 trajet.setVilleDepart(trajetDTO.villeDepart());
                 trajet.setVilleArrivee(trajetDTO.villeArrivee());
                 trajet.setDate(trajetDTO.date());
                 trajet.setHoraire(trajetDTO.horaire());
-                trajet.setNombreDePlaces(trajetDTO.placeDisponible()); // Initialise placeDisponible avec nombreDePlaces
-                trajet.setPlaceDisponible(trajetDTO.placeDisponible());
+                trajet.setNombreDePlaces(trajetDTO.nombreDePlaces()); // Initialise placeDisponible avec nombreDePlaces
+                trajet.setPlaceDisponible(trajetDTO.nombreDePlaces());
                 trajet.setPrix(trajetDTO.prix());
                 trajet.setConducteurMail(trajetDTO.conducteurMail());
                 trajetDAO.save(trajet);
@@ -57,10 +63,13 @@ public class TrajetService {
                 }
             }
         } catch (Exception e) {
+            System.err.println("Erreur capturée : " + e.getClass().getName() + " - " + e.getMessage());
+            e.printStackTrace(); // Pour voir toute la pile d'exécution
             throw new RuntimeException("Erreur lors de la synchronisation des trajets : " + e.getMessage(), e);
+
         }
     }
 
-    
+
 }
 

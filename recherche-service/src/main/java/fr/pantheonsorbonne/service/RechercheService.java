@@ -1,11 +1,5 @@
 package fr.pantheonsorbonne.service;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import fr.pantheonsorbonne.dao.HistoriqueRechercheDAO;
 import fr.pantheonsorbonne.dao.RequeteTestDAO;
 import fr.pantheonsorbonne.dao.SousTrajetDAO;
@@ -18,6 +12,12 @@ import fr.pantheonsorbonne.entity.Trajet;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @ApplicationScoped
 public class RechercheService {
@@ -34,14 +34,17 @@ public class RechercheService {
     @Inject
     private RequeteTestDAO testDAO;
 
-    
+    @Inject
+    private TrajetService trajetService;
+
+
     @Transactional
     public void initialiserDonneesDeTest() {
         testDAO.create();
     }
 
 
-     @Transactional
+    @Transactional
     public ResultatDTO rechercherTrajets(RequeteDTO requeteDTO) {
         // Étape 1 : Extraire les critères de recherche
         String villeDepart = requeteDTO.getVilleDepart();
@@ -49,6 +52,8 @@ public class RechercheService {
         LocalDate date = requeteDTO.getDate();
         LocalTime horaire = requeteDTO.getHoraire();
         Double prix = requeteDTO.getPrix();
+
+        trajetService.synchroniserTrajets(villeDepart);
 
         // Étape 2 : Initialiser et enregistrer l'historique de recherche
         HistoriqueRecherche historique = new HistoriqueRecherche();
@@ -60,20 +65,20 @@ public class RechercheService {
         // Étape 3 : Recherche des trajets principaux
         List<Trajet> trajetsTrouves = trajetDAO.findTrajetByCriteria(villeDepart, villeArrivee, date, horaire, prix);
         if (!trajetsTrouves.isEmpty()) {
-            return new ResultatDTO(true, "Nous avons trouvés des trajets correspondant à votre recherche.",
+            return new ResultatDTO(true, true, "Nous avons trouvés des trajets correspondant à votre recherche.",
                     rechercherEtConvertir(trajetsTrouves));
         }
 
         // Étape 4 : Recherche dans les sous-trajets
         trajetsTrouves = sousTrajetDAO.findSousTrajetByCriteria(villeDepart, villeArrivee, date, horaire, prix);
         if (!trajetsTrouves.isEmpty()) {
-            return new ResultatDTO(true,
-                    String.format("Nous avons seulement trouvés des trajets qui passent par %s. Nous allons contacter les conducteurs pour vérifier si ils acceptent de vous déposer à Lyon.", villeArrivee),
+            return new ResultatDTO(true, false,
+                    String.format("Nous avons seulement trouvés des trajets qui passent par %s. Nous allons contacter les conducteurs pour vérifier si ils acceptent de vous déposer à %s.", villeArrivee, villeArrivee),
                     rechercherEtConvertir(trajetsTrouves));
         }
 
         // Étape 5 : Aucun résultat trouvé
-        return new ResultatDTO(false, "Aucun trajet ne correspond à votre recherche.", null);
+        return new ResultatDTO(false, false, "Aucun trajet ne correspond à votre recherche.", null);
     }
 
     // Méthode pour convertir une liste de trajets en DTO
@@ -95,8 +100,8 @@ public class RechercheService {
                 trajet.getHoraire(),
                 trajet.getPlaceDisponible(),
                 trajet.getPrix(),
-                trajet.getConducteurMail(),
-                List.of() // Sous-trajets à ajouter si nécessaire, mais pas besoin de les avoir lors du resultat
+                trajet.getConducteurMail()
+                // Sous-trajets à ajouter si nécessaire, mais pas besoin de les avoir lors du resultat
         );
     }
 }
