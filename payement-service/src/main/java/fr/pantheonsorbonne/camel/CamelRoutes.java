@@ -10,12 +10,10 @@ public class CamelRoutes extends RouteBuilder {
                 .log("Réception des données de paiement : ${body}")
                 .unmarshal().json(ReservationDTO.class)
                 .bean("payment", "processPayment")
-                .choice()
-                .when(simple("${body} == true"))
-                .log("Paiement validé")
-                .otherwise()
-                .log("Paiement refusé")
-                .end();
+                .log("Résultat de la paiement : ${body}")
+                .marshal().json();
+
+              
 
     }
 }
