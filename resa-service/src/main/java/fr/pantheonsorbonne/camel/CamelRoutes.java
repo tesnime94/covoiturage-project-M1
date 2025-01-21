@@ -22,8 +22,9 @@ public class CamelRoutes extends RouteBuilder {
 
         from("direct:sendConfirmationNotification")
                 .log("Envoi de la notification pour réservation : ${body}")
-                .marshal().json() // Convertir le message en JSON
-                .to("sjms2:M1.NotificationService") // Envoi au microservice Notification via le broker
+                 // Convertir le message en JSON
+                .to("sjms2:M1.NotifService") // Envoi au microservice Notification via le broker
+                .marshal().json()
                 .log("Notification envoyée avec succès : ${body}");
 
     }
