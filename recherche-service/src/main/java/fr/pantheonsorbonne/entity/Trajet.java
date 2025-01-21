@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ public class Trajet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 
     @Column(nullable = false)
     private String villeDepart;
@@ -38,7 +40,8 @@ public class Trajet {
     @Column(nullable = false)
     private String conducteurMail;
 
-    @OneToMany(mappedBy = "trajet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany()
+    @JsonIgnore // pour eviter vite d'inclure les sous trajets automatiquement
     private List<SousTrajet> sousTrajets;
 
     // Getters et Setters

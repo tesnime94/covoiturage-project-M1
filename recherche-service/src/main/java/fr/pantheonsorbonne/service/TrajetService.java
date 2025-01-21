@@ -31,8 +31,6 @@ public class TrajetService {
     @Transactional
     public void synchroniserTrajets(String villeDepart) {
         try {
-            //System.out.println("bien recuperer et convertit en dto");
-
             // Étape 1 : Récupérer les trajets depuis le microservice Trajet
             List<TrajetCompletDTO> trajetsDTO = trajetGateway.getTrajets(villeDepart);
 
