@@ -5,13 +5,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-<<<<<<< Updated upstream
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
-=======
->>>>>>> Stashed changes
+
 
 @ApplicationScoped
 public class TrajetDAO {
@@ -19,10 +15,7 @@ public class TrajetDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
-<<<<<<< Updated upstream
-=======
-    
->>>>>>> Stashed changes
+
     @Transactional
     public void save(Trajet trajet) {
         entityManager.persist(trajet);
@@ -33,7 +26,7 @@ public class TrajetDAO {
         return entityManager.find(Trajet.class, id);
     }
 
-    public List<Trajet> findTrajetByCriteria(String villeDepart, String villeArrivee, LocalDate date, LocalTime horaire, Double prix) {
+    public List<Trajet> findTrajetByCriteria(String villeDepart, String villeArrivee, String date, String horaire, Double prix) {
         String request = "SELECT t FROM Trajet t " +
                 "WHERE t.villeDepart = :villeDepart " +
                 "AND t.villeArrivee = :villeArrivee " +

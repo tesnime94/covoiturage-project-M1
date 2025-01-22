@@ -3,8 +3,6 @@ package fr.pantheonsorbonne.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +20,10 @@ public class TrajetPrincipal {
     private String villeArrivee;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private String date;
 
     @Column(nullable = false)
-    private LocalTime horaire;
+    private String horaire;
 
     @Column(nullable = false)
     private Double prix;
@@ -40,11 +38,11 @@ public class TrajetPrincipal {
     @JsonIgnore // pour eviter vite d'inclure les sous trajets automatiquement
     private List<SousTrajet> sousTrajets = new ArrayList<>();
 
-    public LocalTime getHoraire() {
+    public String getHoraire() {
         return horaire;
     }
 
-    public void setHoraire(LocalTime horaire) {
+    public void setHoraire(String horaire) {
         this.horaire = horaire;
     }
 
@@ -104,11 +102,11 @@ public class TrajetPrincipal {
         this.sousTrajets = sousTrajets;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 }

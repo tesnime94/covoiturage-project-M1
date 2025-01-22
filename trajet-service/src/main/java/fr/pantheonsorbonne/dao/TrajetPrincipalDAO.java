@@ -6,8 +6,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @ApplicationScoped
@@ -60,7 +58,7 @@ public class TrajetPrincipalDAO {
                 .getResultList();
     }
 
-    public boolean hasTrajetAtSameTime(String emailConducteur, LocalDate date, LocalTime horaire) {
+    public boolean hasTrajetAtSameTime(String emailConducteur, String date, String horaire) {
         String query = """
                 SELECT COUNT(tp)
                 FROM TrajetPrincipal tp

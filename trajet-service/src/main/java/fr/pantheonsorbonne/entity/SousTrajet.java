@@ -3,9 +3,6 @@ package fr.pantheonsorbonne.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 @Entity
 @Table(name = "sous_trajet")
 public class SousTrajet {
@@ -21,10 +18,10 @@ public class SousTrajet {
     private String villeArrivee;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private String date;
 
     @Column(nullable = false)
-    private LocalTime horaire;
+    private String horaire;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore // pour eviter vite d'inclure les sous trajets automatiquement
@@ -55,19 +52,19 @@ public class SousTrajet {
         this.villeArrivee = villeArrivee;
     }
 
-    public LocalTime getHoraire() {
+    public String getHoraire() {
         return horaire;
     }
 
-    public void setHoraire(LocalTime horaire) {
+    public void setHoraire(String horaire) {
         this.horaire = horaire;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

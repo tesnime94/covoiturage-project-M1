@@ -1,10 +1,5 @@
 package fr.pantheonsorbonne.service;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.pantheonsorbonne.dao.SousTrajetDAO;
 import fr.pantheonsorbonne.dao.TrajetDAO;
 import fr.pantheonsorbonne.dto.SousTrajetDTO;
@@ -16,6 +11,10 @@ import fr.pantheonsorbonne.gateway.TrajetGateway;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 @ApplicationScoped
 public class TrajetService {
@@ -38,7 +37,7 @@ public class TrajetService {
 
             //   enregistrer chaque trajet principal
             for (TrajetCompletDTO trajetDTO : trajetsDTO) {
-                
+
                 Trajet trajet = new Trajet();
                 trajet.setVilleDepart(trajetDTO.villeDepart());
                 trajet.setVilleArrivee(trajetDTO.villeArrivee());
@@ -58,7 +57,7 @@ public class TrajetService {
                         sousTrajet.setVilleArrivee(sousTrajetDTO.villeArrivee());
                         sousTrajet.setDate(sousTrajetDTO.date());
                         sousTrajet.setTrajet(trajet); // On Associe le sous-trajet au trajet principal
-                        sousTrajetDAO.save(sousTrajet);
+
                     }
                 }
             }

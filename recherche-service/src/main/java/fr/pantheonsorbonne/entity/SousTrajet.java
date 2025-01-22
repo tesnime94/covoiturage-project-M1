@@ -3,11 +3,10 @@ package fr.pantheonsorbonne.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-
 @Entity
 @Table(name = "sous_trajet")
 public class SousTrajet {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,11 +20,10 @@ public class SousTrajet {
     private String villeArrivee;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private String date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore // pour eviter vite d'inclure les sous trajets automatiquement
-    @JoinColumn(name = "id", nullable = false)
     private Trajet trajet;
 
     // Getters et Setters
@@ -54,11 +52,11 @@ public class SousTrajet {
         this.villeArrivee = villeArrivee;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

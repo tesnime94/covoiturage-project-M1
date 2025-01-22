@@ -49,7 +49,7 @@ public class TrajetService {
 
 
     @Transactional
-    public TrajetPrincipal createTrajet(String villeDepart, String villeArrivee, LocalDate date, LocalTime horaire, Integer nombreDePlaces, Double prix, String conducteurMail) {
+    public TrajetPrincipal createTrajet(String villeDepart, String villeArrivee, String date, String horaire, Integer nombreDePlaces, Double prix, String conducteurMail) {
         // check de l'existence du conducteur
         if (!userGateway.validateUserByMail(conducteurMail)) {
             throw new InvalidTrajetDataException("Le conducteur n'existe pas dans la base de données.");
@@ -67,12 +67,12 @@ public class TrajetService {
         if (nombreDePlaces == null || nombreDePlaces <= 0) {
             throw new InvalidTrajetDataException("Le nombre de places doit être supérieur à 0.");
         }
-        if (date == null || (date.isBefore(today))) {
-            throw new InvalidTrajetDataException("La date doit être une date future.");
-        }
-        if (date.equals(today) && (horaire == null || horaire.isBefore(now))) {
-            throw new InvalidTrajetDataException("Si la date est aujourd'hui, l'horaire doit être dans le futur.");
-        }
+//        if (date == null || (date.isBefore(today))) {
+//            throw new InvalidTrajetDataException("La date doit être une date future.");
+//        }
+//        if (date.equals(today) && (horaire == null || horaire.isBefore(now))) {
+//            throw new InvalidTrajetDataException("Si la date est aujourd'hui, l'horaire doit être dans le futur.");
+//        }
 
         // Création de l'objet TrajetPrincipal
         TrajetPrincipal trajetPrincipal = new TrajetPrincipal();

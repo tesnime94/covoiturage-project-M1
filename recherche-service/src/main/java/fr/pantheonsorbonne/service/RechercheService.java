@@ -1,11 +1,5 @@
 package fr.pantheonsorbonne.service;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import fr.pantheonsorbonne.dao.HistoriqueRechercheDAO;
 import fr.pantheonsorbonne.dao.SousTrajetDAO;
 import fr.pantheonsorbonne.dao.TrajetDAO;
@@ -19,6 +13,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @ApplicationScoped
 public class RechercheService {
 
@@ -31,7 +29,7 @@ public class RechercheService {
     @Inject
     private HistoriqueRechercheDAO historiqueRechercheDAO;
 
-    
+
     @Inject
     private ReservationGateway reservationGateway;
     @Inject
@@ -50,8 +48,8 @@ public class RechercheService {
         //  Extraire les critères de recherche
         String villeDepart = requeteDTO.villeDepart();
         String villeArrivee = requeteDTO.villeArrivee();
-        LocalDate date = requeteDTO.date();
-        LocalTime horaire = requeteDTO.horaire();
+        String date = requeteDTO.date();
+        String horaire = requeteDTO.horaire();
         Double prix = requeteDTO.prix();
 
         // Récupération des trajets depuis VilleDepart dans le microservice trajet
@@ -108,7 +106,7 @@ public class RechercheService {
                 trajet.getPlaceDisponible(),
                 trajet.getPrix(),
                 trajet.getConducteurMail()
-                
+
         );
     }
 }

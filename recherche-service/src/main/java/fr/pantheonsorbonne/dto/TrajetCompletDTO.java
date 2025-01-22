@@ -1,8 +1,6 @@
 package fr.pantheonsorbonne.dto;
 
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 // Ce DTO sert lors de la récupération du trajet du microservice trajet
@@ -11,8 +9,8 @@ public record TrajetCompletDTO(
         Long id,
         String villeDepart,
         String villeArrivee,
-        LocalDate date,
-        LocalTime horaire,
+        String date,
+        String horaire,
         Integer nombreDePlaces,
         Integer placeDisponible,
         Double prix,

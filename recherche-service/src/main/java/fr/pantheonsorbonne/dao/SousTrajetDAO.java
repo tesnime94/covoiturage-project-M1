@@ -6,13 +6,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-<<<<<<< Updated upstream
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
-=======
->>>>>>> Stashed changes
+
 
 @ApplicationScoped
 public class SousTrajetDAO {
@@ -20,17 +16,14 @@ public class SousTrajetDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
-<<<<<<< Updated upstream
-    // Méthode pour sauvegarder un sous-trajet
-=======
->>>>>>> Stashed changes
+
     @Transactional
     public void save(SousTrajet sousTrajet) {
         entityManager.persist(sousTrajet);
     }
 
 
-    public List<Trajet> findSousTrajetByCriteria(String villeDepart, String villeArrivee, LocalDate date, LocalTime horaire, Double prix) {
+    public List<Trajet> findSousTrajetByCriteria(String villeDepart, String villeArrivee, String date, String horaire, Double prix) {
         String request = "SELECT DISTINCT t " +
                 "FROM Trajet t JOIN t.sousTrajets st " +
                 "WHERE t.villeDepart = :villeDepart " +
@@ -48,8 +41,6 @@ public class SousTrajetDAO {
                 .getResultList();
 
     }
-
-
 
 
     // Méthode pour rechercher des sous-trajets par ville de départ et d'arrivée

@@ -1,23 +1,10 @@
 package fr.pantheonsorbonne.entity;
 
-<<<<<<< Updated upstream
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-=======
->>>>>>> Stashed changes
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "trajet")
@@ -35,10 +22,10 @@ public class Trajet {
     private String villeArrivee;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private String date;
 
     @Column(nullable = false)
-    private LocalTime horaire;
+    private String horaire;
 
     @Column(nullable = false)
     private Integer nombreDePlaces; // Valeur constante, ne change jamais
@@ -99,19 +86,19 @@ public class Trajet {
         this.villeArrivee = villeArrivee;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public LocalTime getHoraire() {
+    public String getHoraire() {
         return horaire;
     }
 
-    public void setHoraire(LocalTime horaire) {
+    public void setHoraire(String horaire) {
         this.horaire = horaire;
     }
 
