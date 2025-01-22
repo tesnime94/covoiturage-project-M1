@@ -53,22 +53,18 @@ public class CamelRoutes extends RouteBuilder {
                 .log("Utilisateur valide")
                 .end();
 
-        // Configurer l'ObjectMapper avec le module JSR310
+        // Configurer l'ObjectMapper pour la route à envoyer à recherche
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-
         // Configurer le JacksonDataFormat
         JacksonDataFormat jsonDataFormat = new JacksonDataFormat(mapper, TrajetAvecSousTrajetsDTO.class);
-
 
         from("sjms2:M1.TrajetService")
                 .log("Envoie de trajet pour ${body}")
                 .bean("customTrajetService", "getTrajetsWithSousTrajetsByVilleDepart(${body})") // Appelle le service
                 .log("Résultat du trajet : ${body}")
-                .marshal(jsonDataFormat) // Utiliser le JacksonDataFormat pour sérialiser en JSON
+                .marshal(jsonDataFormat)
         ;
-
-
     }
 }
 
