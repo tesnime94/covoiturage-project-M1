@@ -30,7 +30,7 @@ public class CamelRoutes extends RouteBuilder {
                 from("direct:sendResultatReservation")
                 .log("Envoi des résultats au microservice réservation : ${body}")
                 .marshal().json()
-                .to("sjms2:M1.ReservationService")
+                .to("sjms2:M1.ResaService")
                 .log("Résultat envoyé avec succès au microservice réservation.");
     }
 }

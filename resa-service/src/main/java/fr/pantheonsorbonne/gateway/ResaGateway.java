@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import org.apache.camel.ProducerTemplate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @ApplicationScoped
@@ -37,4 +38,13 @@ public class ResaGateway {
 
         producerTemplate.sendBody("direct:sendConfirmationNotification", notificationDetails);
     }
+
+    public void sendDriverNotificationFromMap(String userEmail, Long trajetNumber ) {
+        Map<String, Object> notificationDetails2 = new HashMap<>();
+        notificationDetails2.put("userEmail", userEmail);
+        notificationDetails2.put("trajetNumber", trajetNumber);
+
+        producerTemplate.sendBody("direct:sendConfirmationNotification", notificationDetails2);
+    }
+
 }
