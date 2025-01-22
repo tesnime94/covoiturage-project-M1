@@ -12,6 +12,8 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.apache.camel.ProducerTemplate;
 
+import java.util.Map;
+
 @ApplicationScoped
 public class ResaService {
 
@@ -54,9 +56,26 @@ public class ResaService {
         resaDAO.save(resa);
 
         resaGateway.sendConfirmationNotification(userEmail, resa.getResaNumber());
-        resaGateway.sendDriverNotificationFromMap(userEmail, resa.getTrajetNumber());
 
         return resa;
+
+    }
+
+    public void createResaFromMap(Map<String, Object> trajetMap) {
+        // Extraction des informations du trajet
+        String userEmail = (String) trajetMap.get("userEmail");
+        Long trajetNumber = (Long) trajetMap.get("trajetNumber");
+
+        // Logique de création de réservation
+        // Par exemple, enregistrer dans une base de données ou effectuer une autre action
+        Resa resa = new Resa();
+        resa.setTrajetNumber(trajetNumber);
+
+        resaGateway.sendDriverNotificationFromMap(userEmail, trajetNumber);
+
+        // Sauvegarder la réservation dans une base de données (par exemple)
+        resaDAO.save(resa);
+
 
     }
 }

@@ -1,13 +1,12 @@
 package fr.pantheonsorbonne.camel;
 
-import fr.pantheonsorbonne.dto.TrajetResaDTO;
 import fr.pantheonsorbonne.gateway.ResaGateway;
 import fr.pantheonsorbonne.service.ResaService;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.dataformat.JsonLibrary;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 public class CamelRoutes extends RouteBuilder {
     @Override
