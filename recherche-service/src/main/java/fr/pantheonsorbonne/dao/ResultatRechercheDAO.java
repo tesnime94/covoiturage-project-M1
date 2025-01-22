@@ -10,9 +10,15 @@ import jakarta.transaction.Transactional;
 @ApplicationScoped
 public class ResultatRechercheDAO {
 
+    
+
     @PersistenceContext
     private EntityManager entityManager;
+<<<<<<< Updated upstream
 
+=======
+    
+>>>>>>> Stashed changes
     @Transactional
     public void save(ResultatRecherche result) {
         entityManager.persist(result);

@@ -4,7 +4,6 @@ package fr.pantheonsorbonne.resources;
 import java.util.List;
 
 import fr.pantheonsorbonne.dao.HistoriqueRechercheDAO;
-import fr.pantheonsorbonne.dao.RequeteTestDAO;
 import fr.pantheonsorbonne.dao.SousTrajetDAO;
 import fr.pantheonsorbonne.dao.TrajetDAO;
 import fr.pantheonsorbonne.entity.HistoriqueRecherche;
@@ -15,7 +14,6 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -42,9 +40,7 @@ public class TrajetsRessource {
     @Inject
     private HistoriqueRechercheDAO histoDAO;
 
-    @Inject
-    private RequeteTestDAO testDAO;
-
+    
 
 @GET
 @Path("/afficher-historique")
@@ -54,19 +50,7 @@ public Response afficherhistorique() {
     return Response.ok(histo).build();
 }
 
-@POST 
-@Path("/seed-data")
-public Response seedData() {
-    try {
-        // la méthode pour insérer les données
-        rechercheService.initialiserDonneesDeTest();
-        return Response.ok("Données de test insérées avec succès.").build();
-    } catch (Exception e) {
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity("Erreur lors de l'insertion des données : " + e.getMessage())
-                .build();
-    }
-}
+
     
 @GET
 @Path("/afficher-trajets")

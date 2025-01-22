@@ -5,10 +5,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+<<<<<<< Updated upstream
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+=======
+>>>>>>> Stashed changes
 
 @ApplicationScoped
 public class TrajetDAO {
@@ -16,6 +19,10 @@ public class TrajetDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
+<<<<<<< Updated upstream
+=======
+    
+>>>>>>> Stashed changes
     @Transactional
     public void save(Trajet trajet) {
         entityManager.persist(trajet);

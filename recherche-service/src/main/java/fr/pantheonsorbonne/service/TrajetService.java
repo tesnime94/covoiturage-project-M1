@@ -1,19 +1,21 @@
 package fr.pantheonsorbonne.service;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.pantheonsorbonne.dao.SousTrajetDAO;
 import fr.pantheonsorbonne.dao.TrajetDAO;
 import fr.pantheonsorbonne.dto.SousTrajetDTO;
 import fr.pantheonsorbonne.dto.TrajetCompletDTO;
 import fr.pantheonsorbonne.entity.SousTrajet;
 import fr.pantheonsorbonne.entity.Trajet;
+import fr.pantheonsorbonne.exception.TrajetOperationException;
 import fr.pantheonsorbonne.gateway.TrajetGateway;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 @ApplicationScoped
 public class TrajetService {
@@ -34,9 +36,9 @@ public class TrajetService {
             // Étape 1 : Récupérer les trajets depuis le microservice Trajet
             List<TrajetCompletDTO> trajetsDTO = trajetGateway.getTrajets(villeDepart);
 
-            // Étape 2 : Parcourir et enregistrer chaque trajet principal
+            //   enregistrer chaque trajet principal
             for (TrajetCompletDTO trajetDTO : trajetsDTO) {
-                System.out.println("TETFETFVDGEVBFGDXRB" + trajetDTO);
+                
                 Trajet trajet = new Trajet();
                 trajet.setVilleDepart(trajetDTO.villeDepart());
                 trajet.setVilleArrivee(trajetDTO.villeArrivee());
@@ -48,7 +50,7 @@ public class TrajetService {
                 trajet.setConducteurMail(trajetDTO.conducteurMail());
                 trajetDAO.save(trajet);
 
-                // Étape 3 : Enregistrer les sous-trajets associés , on ne récupère pas l'horaire
+                // Enregistre les sous trajets
                 if (trajetDTO.sousTrajets() != null) {
                     for (SousTrajetDTO sousTrajetDTO : trajetDTO.sousTrajets()) {
                         SousTrajet sousTrajet = new SousTrajet();
@@ -63,7 +65,8 @@ public class TrajetService {
         } catch (Exception e) {
             System.err.println("Erreur capturée : " + e.getClass().getName() + " - " + e.getMessage());
             e.printStackTrace(); // Pour voir toute la pile d'exécution
-            throw new RuntimeException("Erreur lors de la synchronisation des trajets : " + e.getMessage(), e);
+            throw new TrajetOperationException("Erreur lors de la synchronisation des trajets", e);
+
 
         }
     }

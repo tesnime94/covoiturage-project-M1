@@ -2,6 +2,9 @@ package fr.pantheonsorbonne.gateway;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.pantheonsorbonne.dto.TrajetCompletDTO;
+
+
+import fr.pantheonsorbonne.exception.TrajetCommunicationException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.ProducerTemplate;
@@ -23,11 +26,7 @@ public class TrajetGateway {
             // Envoie la ville de départ et récupère la réponse
             Object response = producerTemplate.requestBody("direct:getTrajets", villeDepart);
 
-            // Log pour vérifier le type de la réponse
-            System.out.println("Type de réponse de la route : " + response.getClass().getName());
-
-
-            // Si la réponse est une liste de LinkedHashMap
+            // Le type de rep est une liste
 
             List<?> rawList = (List<?>) response;
             return rawList.stream()
@@ -36,7 +35,8 @@ public class TrajetGateway {
 
 
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la récupération des trajets : " + e.getMessage(), e);
+             throw new TrajetCommunicationException("Erreur lors de la récupération des trajets depuis le service distant", e);
+
         }
     }
 }

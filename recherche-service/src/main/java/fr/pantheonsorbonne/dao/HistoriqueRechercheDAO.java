@@ -5,8 +5,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+<<<<<<< Updated upstream
 
 import java.util.List;
+=======
+>>>>>>> Stashed changes
 
 @ApplicationScoped
 public class HistoriqueRechercheDAO {

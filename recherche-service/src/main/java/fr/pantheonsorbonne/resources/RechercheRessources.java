@@ -1,7 +1,6 @@
 package fr.pantheonsorbonne.resources;
 
 import fr.pantheonsorbonne.dao.HistoriqueRechercheDAO;
-import fr.pantheonsorbonne.dao.RequeteTestDAO;
 import fr.pantheonsorbonne.dao.SousTrajetDAO;
 import fr.pantheonsorbonne.dao.TrajetDAO;
 import fr.pantheonsorbonne.dto.RequeteDTO;
@@ -33,8 +32,7 @@ public class RechercheRessources {
     @Inject
     private HistoriqueRechercheDAO histoDAO;
 
-    @Inject
-    private RequeteTestDAO testDAO;
+    
 
 
 
@@ -54,7 +52,7 @@ public class RechercheRessources {
                 return Response.status(Response.Status.NOT_FOUND).entity(resultat).build();
             }
         } catch (Exception e) {
-            // Gestion des erreurs inattendues
+            
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Une erreur est survenue lors de la recherche : " + e.getMessage())
                     .build();

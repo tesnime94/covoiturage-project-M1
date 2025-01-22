@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+// Ce DTO sert lors de la récupération du trajet du microservice trajet
+
 public record TrajetCompletDTO(
         Long id,
         String villeDepart,

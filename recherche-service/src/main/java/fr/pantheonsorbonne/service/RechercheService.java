@@ -1,7 +1,12 @@
 package fr.pantheonsorbonne.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import fr.pantheonsorbonne.dao.HistoriqueRechercheDAO;
-import fr.pantheonsorbonne.dao.RequeteTestDAO;
 import fr.pantheonsorbonne.dao.SousTrajetDAO;
 import fr.pantheonsorbonne.dao.TrajetDAO;
 import fr.pantheonsorbonne.dto.RequeteDTO;
@@ -9,15 +14,10 @@ import fr.pantheonsorbonne.dto.ResultatDTO;
 import fr.pantheonsorbonne.dto.TrajetDTO;
 import fr.pantheonsorbonne.entity.HistoriqueRecherche;
 import fr.pantheonsorbonne.entity.Trajet;
+import fr.pantheonsorbonne.gateway.ReservationGateway;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @ApplicationScoped
 public class RechercheService {
@@ -31,53 +31,60 @@ public class RechercheService {
     @Inject
     private HistoriqueRechercheDAO historiqueRechercheDAO;
 
+    
     @Inject
-    private RequeteTestDAO testDAO;
-
+    private ReservationGateway reservationGateway;
     @Inject
     private TrajetService trajetService;
 
 
-    @Transactional
+    /*@Transactional
     public void initialiserDonneesDeTest() {
         testDAO.create();
     }
+        */
 
 
     @Transactional
     public ResultatDTO rechercherTrajets(RequeteDTO requeteDTO) {
-        // Étape 1 : Extraire les critères de recherche
-        String villeDepart = requeteDTO.getVilleDepart();
-        String villeArrivee = requeteDTO.getVilleArrivee();
-        LocalDate date = requeteDTO.getDate();
-        LocalTime horaire = requeteDTO.getHoraire();
-        Double prix = requeteDTO.getPrix();
+        //  Extraire les critères de recherche
+        String villeDepart = requeteDTO.villeDepart();
+        String villeArrivee = requeteDTO.villeArrivee();
+        LocalDate date = requeteDTO.date();
+        LocalTime horaire = requeteDTO.horaire();
+        Double prix = requeteDTO.prix();
+
+        // Récupération des trajets depuis VilleDepart dans le microservice trajet
 
         trajetService.synchroniserTrajets(villeDepart);
 
-        // Étape 2 : Initialiser et enregistrer l'historique de recherche
+        //  Initialiser et enregistrer l'historique de recherche
         HistoriqueRecherche historique = new HistoriqueRecherche();
         historique.setVilleDepart(villeDepart);
         historique.setVilleArrivee(villeArrivee);
         historique.setRechercheEffectueeLe(new Date());
         historiqueRechercheDAO.save(historique);
 
-        // Étape 3 : Recherche des trajets principaux
+        // Étape 1 : Recherche des trajets principaux
         List<Trajet> trajetsTrouves = trajetDAO.findTrajetByCriteria(villeDepart, villeArrivee, date, horaire, prix);
         if (!trajetsTrouves.isEmpty()) {
-            return new ResultatDTO(true, true, "Nous avons trouvés des trajets correspondant à votre recherche.",
-                    rechercherEtConvertir(trajetsTrouves));
+            // On enregsitre  le résultat pour l'envoyer à reservation
+            ResultatDTO resultat = new ResultatDTO(true, true, "Nous avons trouvés un ou des trajets correspondant à votre recherche", rechercherEtConvertir(trajetsTrouves));
+            reservationGateway.envoyerResultatReservation(resultat);
+            return resultat;
         }
 
-        // Étape 4 : Recherche dans les sous-trajets
+        // Étape 2 : Recherche dans les sous-trajets Si pas de trajet principaux
         trajetsTrouves = sousTrajetDAO.findSousTrajetByCriteria(villeDepart, villeArrivee, date, horaire, prix);
         if (!trajetsTrouves.isEmpty()) {
-            return new ResultatDTO(true, false,
-                    String.format("Nous avons seulement trouvés des trajets qui passent par %s. Nous allons contacter les conducteurs pour vérifier si ils acceptent de vous déposer à %s.", villeArrivee, villeArrivee),
-                    rechercherEtConvertir(trajetsTrouves));
+
+            // On enregsitre  le résultat pour l'envoyer à reservation
+            ResultatDTO resultat = new ResultatDTO(true, false, String.format("Nous avons seulement trouvés des trajets qui passent par %s. Nous allons contacter les conducteurs pour vérifier si ils acceptent de vous déposer à %s.", villeArrivee, villeArrivee), rechercherEtConvertir(trajetsTrouves));
+            reservationGateway.envoyerResultatReservation(resultat);
+            return resultat;
         }
 
-        // Étape 5 : Aucun résultat trouvé
+        // Étape 3 : Aucun résultat trouvé
         return new ResultatDTO(false, false, "Aucun trajet ne correspond à votre recherche.", null);
     }
 
@@ -101,7 +108,7 @@ public class RechercheService {
                 trajet.getPlaceDisponible(),
                 trajet.getPrix(),
                 trajet.getConducteurMail()
-                // Sous-trajets à ajouter si nécessaire, mais pas besoin de les avoir lors du resultat
+                
         );
     }
 }
