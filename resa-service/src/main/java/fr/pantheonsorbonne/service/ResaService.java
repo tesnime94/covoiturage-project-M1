@@ -33,6 +33,8 @@ public class ResaService {
         return resa;
     }
 
+
+
     @Transactional
     public Resa createResa(Long trajetNumber, Long amount, String cardHolderName, Long cardNumber, String expirationDate, int cvc, String userEmail) throws PaymentException {
 
@@ -52,6 +54,7 @@ public class ResaService {
         resaDAO.save(resa);
 
         resaGateway.sendConfirmationNotification(userEmail, resa.getResaNumber());
+        resaGateway.sendDriverNotificationFromMap(userEmail, resa.getTrajetNumber());
 
         return resa;
 
